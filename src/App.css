@@ -1,0 +1,30 @@
+.App {
+  text-align: center;
+}
+
+.heading {
+  position: relative;
+  top: 200px;
+  letter-spacing: 0.15em;
+  color: grey;
+}
+
+.links {
+  display: inline-block;
+  width: calc(calc(80% / 3) - 40px);
+  padding-left: 20px
+}
+
+.links-container:nth-child(1) {
+  padding-left: 0px;
+}
+
+.links-btn {
+  width: 100%;
+}
+
+.links-container {
+  display: inline-block;
+  width: 80%;
+  padding-top: 20px;
+}
