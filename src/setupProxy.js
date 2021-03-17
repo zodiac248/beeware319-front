@@ -1,5 +1,12 @@
-const createProxyMinpddleware = require('http-proxy-middleware');
+
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function(app) {
-    app.use(createProxyMinpddleware('/api', { target: 'https://beeware319.herokuapp.com' }));
+    app.use(
+        '/api',
+        createProxyMiddleware({
+            target: 'https://beeware319.herokuapp.com',
+            changeOrigin: true
+        })
+    );
 };
