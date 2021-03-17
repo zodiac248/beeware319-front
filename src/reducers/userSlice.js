@@ -27,6 +27,7 @@ export const userSlice = createSlice({
     extraReducers: {
         [getUserInfo.fulfilled]: (state, action) => {
             state.isLoggedIn = action.payload.authenticated
+            alert(state.isLoggedIn)
             state.isAdmin = action.payload.principal.idToken.claims.roles.includes(roles.admin)
             state.username = action.payload.name
             state.fName = action.payload.principal.givenName
