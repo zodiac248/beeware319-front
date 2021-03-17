@@ -12,7 +12,7 @@ export default class client {
     }
     static async getBuilding(id) {
         try {
-            const response = axios.get("https://beeware319.herokuapp.com/building", {params: {id}} );
+            const response = axios.get("https://beeware319.herokuapp.com/building", {withCredentials:true,params: {id}} );
             return response
         } catch (e) {
             console.log(e.message())
@@ -138,6 +138,7 @@ export default class client {
 
     static async getUserInfo() {
         const response = await axios.get("https://beeware319.herokuapp.com/user/userinfo", {withCredentials: true})
+        alert(response)
         return response
     }
 
