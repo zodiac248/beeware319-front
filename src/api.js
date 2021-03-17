@@ -138,7 +138,7 @@ export default class client {
 
     static async getUserInfo() {
         const response = await axios.get("https://beeware319.herokuapp.com/user/userinfo", {withCredentials: true})
-        alert(response)
+        alert(JSON.stringify(response))
         return response
     }
 
