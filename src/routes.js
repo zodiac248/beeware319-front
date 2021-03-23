@@ -31,7 +31,7 @@ export const Routes = (props) => {
                         </Route>
                     </Switch>
                     :
-                    <span>Please <a href="https://beeware319.herokuapp.com"> Login </a></span>
+                    <span>Please <a href="/api"> Login </a></span>
             }
         </div>
     )
