@@ -10,6 +10,8 @@
     "async--await": "^1.0.2",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
+    "express-middleware": "^3.4.2",
+    "http-proxy-middleware": "^1.0.6",
     "promise": "^8.1.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
