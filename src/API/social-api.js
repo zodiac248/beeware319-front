@@ -32,7 +32,7 @@ export default class socialClient {
 
     static async getPost({id}) {
         try {
-            const response = axios.get(baseUrl + "/api/posting/id", {params: {id}, withCredentials: true});
+            const response = axios.get(baseUrl + "/posting/id", {params: {id}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())
@@ -41,7 +41,7 @@ export default class socialClient {
 
     static async deletePosting({id}) {
         try {
-            const response = axios.delete(baseUrl + "/api/posting", {data: {id}, withCredentials: true});
+            const response = axios.delete(baseUrl + "/posting", {data: {id}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())
@@ -50,7 +50,7 @@ export default class socialClient {
 
     static async likePosting({id}) {
         try {
-            const response = axios.put(baseUrl + "/api/posting/like", {id}, {withCredentials: true});
+            const response = axios.put(baseUrl + "/posting/like", {id}, {withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())
@@ -60,7 +60,7 @@ export default class socialClient {
     // Topics
     static async getTopics() {
         try {
-            const response = axios.get(baseUrl + "/api/topic", {withCredentials: true});
+            const response = axios.get(baseUrl + "/topic", {withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())
@@ -70,7 +70,7 @@ export default class socialClient {
     // Subscriptions
     static async addNewSubscription({email, topicId}) {
         try {
-            const response = axios.post(baseUrl + "/api/subscription",{email, topicId}, {withCredentials: true});
+            const response = axios.post(baseUrl + "/subscription",{email, topicId}, {withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())
@@ -79,7 +79,7 @@ export default class socialClient {
 
     static async deleteSubscription({id}) {
         try {
-            const response = axios.delete(baseUrl + "/api/subscription", {data: {id}, withCredentials: true})
+            const response = axios.delete(baseUrl + "/subscription", {data: {id}, withCredentials: true})
             return response
         } catch (e) {
             console.log(e.message())
@@ -88,7 +88,7 @@ export default class socialClient {
 
     static async getSubscriptionsByEmail({email}) {
         try {
-            const response = axios.get(baseUrl + "/api/subscription",{params: {email}, withCredentials: true});
+            const response = axios.get(baseUrl + "/subscription",{params: {email}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())
@@ -97,7 +97,7 @@ export default class socialClient {
 
     static async getSubscriptionByTopic({topicId}) {
         try {
-            const response = axios.get(baseUrl + "/api/subscription/byTopic",{params: {topicId}, withCredentials: true});
+            const response = axios.get(baseUrl + "/subscription/byTopic",{params: {topicId}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())
@@ -107,7 +107,7 @@ export default class socialClient {
     // Notifications
     static async deleteNotification({id}) {
         try {
-            const response = axios.delete(baseUrl + "/api/notification", {data: {id}, withCredentials: true})
+            const response = axios.delete(baseUrl + "/notification", {data: {id}, withCredentials: true})
             return response
         } catch (e) {
             console.log(e.message())
@@ -116,7 +116,7 @@ export default class socialClient {
 
     static async getNotificationsByEmail({email}) {
         try {
-            const response = axios.get(baseUrl + "/api/notification",{params: {email}, withCredentials: true});
+            const response = axios.get(baseUrl + "/notification",{params: {email}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())
