@@ -14,12 +14,12 @@ export const getUserInfo = createAsyncThunk(
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
-        isLoggedIn: false,
-        isAdmin: false,
-        username: "",
-        fName: "",
-        lName: "",
-        email: ""
+        isLoggedIn: true,
+        isAdmin: true,
+        username: "zodiac",
+        fName: "roy",
+        lName: "shi",
+        email: "roy971128@gmail.com"
     },
     reducers: {
     },
