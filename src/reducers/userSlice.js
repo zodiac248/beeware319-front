@@ -1,12 +1,11 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import client from '../api'
+import client from "../API/api";
 import {roles} from "../constants";
-import axios from "axios";
 
 export const getUserInfo = createAsyncThunk(
     'user/getInfo',
     async () => {
-        const response = await client.getUserInfo()
+        const response = await client.user.getUserInfo()
         return response.data
     }
 )

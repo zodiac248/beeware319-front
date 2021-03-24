@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import counterReducer from './counterSlice';
 import userReducer from './userSlice'
 
 const appReducer = combineReducers({

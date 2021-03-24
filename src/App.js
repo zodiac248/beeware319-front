@@ -1,9 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import User from "./pages/User"
 import './App.css';
-import NavigationBar from "./components/NavigationBar"
-import store from "./store";
+import NavigationBar from "./components/Booking Module/NavigationBar"
 import {Link} from "react-router-dom";
 import {Card} from "react-bootstrap";
 
@@ -25,7 +23,7 @@ function App() {
                     <div className="links">
                         <Card style={{ minHeight: '175px'}}>
                             <Card.Body>
-                                <Card.Title><Link to="/" className="btn btn-info btn-lg links-btn"> SOCIAL </Link></Card.Title>
+                                <Card.Title><Link to="/social" className="btn btn-info btn-lg links-btn"> SOCIAL </Link></Card.Title>
                                 <Card.Subtitle className="mb-2 text-muted">Create, view, and interact with posts from your coworkers</Card.Subtitle>
                             </Card.Body>
                         </Card>
