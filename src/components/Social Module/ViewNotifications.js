@@ -3,7 +3,9 @@ import {connect} from "react-redux";
 import {Container, Card, Button, Modal} from "react-bootstrap";
 import client from "../../API/api";
 import {toTitleCase} from "../../helpers";
+import "../../index.css";
 import {Post} from "./Post";
+import {NotificationManager} from "react-notifications";
 
 export class ViewNotifications extends Component {
     constructor(props) {
@@ -40,6 +42,7 @@ export class ViewNotifications extends Component {
         client.social.deleteNotification({id}).then( res => {
             delete temp[id]
             this.setState({bookings: temp})
+            NotificationManager.success("Notification deleted.")
         })
     }
 
@@ -57,6 +60,7 @@ export class ViewNotifications extends Component {
                                     from {notification.posting.email} on {notification.date.substr(0, 10)}
                                 </Card.Text>
                                 <Button
+                                    className="left-button"
                                     variant={"outline-secondary"}
                                     onClick={(e) => {this.handleOpenPosts(e, notification)}}>See Post
                                 </Button>

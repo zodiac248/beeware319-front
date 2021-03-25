@@ -21,6 +21,7 @@ export class EmployeeViewWindow extends Component {
 
     render() {
         return (
+            <div>
             <Row style={this.viewStyles}>
                 <Col sm={3}>
                     <EmployeeSidebar
@@ -32,6 +33,7 @@ export class EmployeeViewWindow extends Component {
                     {EMPLOYEE_VIEWS[this.state.currView].component}
                 </Col>
             </Row>
+            </div>
         )
     }
 }

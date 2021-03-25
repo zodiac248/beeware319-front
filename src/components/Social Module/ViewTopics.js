@@ -4,7 +4,7 @@ import {Card, Button, Col, Row, Modal} from "react-bootstrap";
 import client from "../../API/api";
 import {toTitleCase} from "../../helpers";
 import {ViewPosts} from "./ViewPosts";
-import {element} from "prop-types";
+import {NotificationManager} from "react-notifications";
 
 export class ViewTopics extends Component {
     constructor(props) {
@@ -35,24 +35,24 @@ export class ViewTopics extends Component {
         })
     }
 
-    handleSubscribe = (topicId) => {
+    handleSubscribe = (topicId, topicName) => {
         const email = this.props.email
-        alert(email)
         client.social.addNewSubscription({email: email, topicId: topicId}).then(res => {
             let topics = this.state.topics
             topics[topicId].subscribed = true;
             topics[topicId].subscriptionId = res.data;
             this.setState({topics})
+            NotificationManager.success("Subscribed to " + toTitleCase(topicName))
         })
     }
 
-    handleUnsubscribe = (topicId) => {
+    handleUnsubscribe = (topicId, topicName) => {
         let id = this.state.topics[topicId].subscriptionId
         client.social.deleteSubscription({id}).then(res => {
             let topics = this.state.topics
             topics[topicId].subscribed = false;
             this.setState({topics})
-            // TODO add notification for unsubscription success.
+            NotificationManager.success("Unsubscribed to " + toTitleCase(topicName))
         })
     }
 
@@ -96,12 +96,11 @@ export class ViewTopics extends Component {
                                                 value={topic.name}
                                                 variant={"outline-secondary"}
                                                 className="float-right"
-                                                // onClick={this.handleUnsubscribeConfirmation}
                                                 onClick={(e) => {
                                                     e.preventDefault()
-                                                    alert("here")
-                                                    this.state.topics[topic.id].subscribed ?
-                                                    this.handleUnsubscribe(topic.id) : this.handleSubscribe(topic.id)
+                                                    this.state.topics[topic.id].subscribed
+                                                        ? this.handleUnsubscribe(topic.id, topic.name)
+                                                        : this.handleSubscribe(topic.id, topic.name)
                                                 }}
                                             >
                                                 {this.state.topics[topic.id].subscribed ?
@@ -116,7 +115,7 @@ export class ViewTopics extends Component {
                     </Row>
                 <Modal show={this.state.show} onHide={this.handleClose} size="lg" scrollable>
                     <Modal.Header closeButton>
-                        <Modal.Title>Category: {this.state.currentTopic? toTitleCase(this.state.currentTopic.name) : ""}</Modal.Title>
+                        <Modal.Title>Topic: {this.state.currentTopic? toTitleCase(this.state.currentTopic.name) : ""}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <ViewPosts topic={this.state.currentTopic} />

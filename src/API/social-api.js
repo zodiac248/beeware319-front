@@ -12,6 +12,15 @@ export default class socialClient {
     }
 
     // Posts
+    static async addPost({email, topicId, title, content}) {
+        try {
+            const response = axios.post(baseUrl + "/posting", {email, topicId, title, content}, {withCredentials: true});
+            return response
+        } catch (e) {
+            console.log(e.message())
+        }
+    }
+
     static async getAllPostings() {
         try {
             const response = axios.get(baseUrl + "/posting", {withCredentials: true});
@@ -20,6 +29,16 @@ export default class socialClient {
             console.log(e.message())
         }
     }
+
+    static async getPostingById({id}) {
+        try {
+            const response = axios.get(baseUrl + "/posting/id", {withCredentials: true, params:{id}});
+            return response
+        } catch (e) {
+            console.log(e.message())
+        }
+    }
+
 
     static async getPostByTopic({topicId}) {
         try {
@@ -51,6 +70,24 @@ export default class socialClient {
     static async likePosting({id}) {
         try {
             const response = axios.put(baseUrl + "/posting/like", {id}, {withCredentials: true});
+            return response
+        } catch (e) {
+            console.log(e.message())
+        }
+    }
+
+    static async getPostingByEmployee({email}) {
+        try {
+            const response = axios.get(baseUrl + "/posting/byEmail", {params: {email}, withCredentials: true});
+            return response
+        } catch (e) {
+            console.log(e.message())
+        }
+    }
+
+    static async updatePosting({id, title, likes, content}) {
+        try {
+            const response = axios.put(baseUrl + "/posting", {id, title, likes, content}, {withCredentials: true});
             return response
         } catch (e) {
             console.log(e.message())

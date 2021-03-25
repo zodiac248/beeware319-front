@@ -7,7 +7,6 @@ export class AdminSocial extends Component {
         return (
             <div>
                 < NavigationBar/>
-
                 <h2> ADMIN SOCIAL ACTIONS </h2>
                 <div className="admin-modal-container">
                     <AddTopicModal />
