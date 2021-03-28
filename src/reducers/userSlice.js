@@ -25,12 +25,12 @@ export const userSlice = createSlice({
     // Reducers for after async thunk actions are fulfilled
     extraReducers: {
         [getUserInfo.fulfilled]: (state, action) => {
-            state.isLoggedIn = true
-            state.isAdmin = true
-            state.username = "admin"
-            state.fName = "ad"
-            state.lName = "min"
-            state.email = "test-admin@beeware319.onmicrosoft.com"
+            state.isLoggedIn = action.payload.authenticated
+            state.isAdmin = action.payload.principal.idToken.claims.roles.includes(roles.admin)
+            state.username = action.payload.name
+            state.fName = action.payload.principal.givenName
+            state.lName = action.payload.principal.familyName
+            state.email = action.payload.principal.attributes.unique_name
         },
     }
 });
