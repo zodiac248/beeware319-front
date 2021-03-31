@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {connect} from "react-redux";
 import {Container} from "react-bootstrap";
 import client from "../../API/api";
-import {Post} from "./Post";
+import Post from "./Post";
 
 export class ViewPosts extends Component {
     constructor(props) {
@@ -20,12 +20,8 @@ export class ViewPosts extends Component {
             temp.push(this.props.topic)
             this.setState({topics: temp}, this.getPosts)
         } else {
-            client.social.getSubscriptionsByEmail({email: this.props.email}).then(res => {
-                let temp = []
-                res.data.forEach(sub => {
-                    temp.push(sub.topic)
-                })
-                this.setState({topics: temp}, this.getPosts)
+            client.social.getPostingBySubscriptions({email: this.props.email}).then(res => {
+                this.setState({posts: res.data})
             })
         }
     }

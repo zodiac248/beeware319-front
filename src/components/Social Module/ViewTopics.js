@@ -4,7 +4,7 @@ import {Card, Button, Col, Row, Modal} from "react-bootstrap";
 import client from "../../API/api";
 import {toTitleCase} from "../../helpers";
 import {ViewPosts} from "./ViewPosts";
-import {NotificationManager} from "react-notifications";
+import AddPostModal from "./AddPostModal";
 
 export class ViewTopics extends Component {
     constructor(props) {
@@ -42,7 +42,6 @@ export class ViewTopics extends Component {
             topics[topicId].subscribed = true;
             topics[topicId].subscriptionId = res.data;
             this.setState({topics})
-            NotificationManager.success("Subscribed to " + toTitleCase(topicName))
         })
     }
 
@@ -52,7 +51,6 @@ export class ViewTopics extends Component {
             let topics = this.state.topics
             topics[topicId].subscribed = false;
             this.setState({topics})
-            NotificationManager.success("Unsubscribed to " + toTitleCase(topicName))
         })
     }
 
@@ -108,6 +106,7 @@ export class ViewTopics extends Component {
                                                     "Subscribe"
                                                 }
                                             </Button>
+                                        <AddPostModal topicId={topic.id}/>
                                     </Card.Footer>
                                 </Card>
                             </Col>)

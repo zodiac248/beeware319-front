@@ -48,7 +48,6 @@ class AddTopicModal extends Component {
     handleSubmit = () => {
         this.state.topics.forEach(topic => {
             client.social.addTopic({name: topic}).then(() => {
-
             })
         })
         this.setState(this.initialState)
@@ -93,9 +92,10 @@ class AddTopicModal extends Component {
                             })}
                             <Form.Group as={Row} controlId="formTopicName">
                                 <Col sm="10">
-                                    <Form.Control placeholder={"Topic name"}
-                                                  onChange={this.updateCurrTopic}
-                                                  value={this.state.currTopic}/>
+                                    <Form.Control
+                                        placeholder={"Topic name"}
+                                        onChange={this.updateCurrTopic}
+                                        value={this.state.currTopic}/>
                                 </Col>
                                 <Col sm="2">
                                     <Button variant={"primary"} onClick={this.addTopic}> Add </Button>

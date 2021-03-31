@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import userReducer from './userSlice'
+import errorReducer from "./errorReducer";
 
 const appReducer = combineReducers({
-    user: userReducer
+    user: userReducer,
+    error: errorReducer
 });
 
 // reset entire state on logout

@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import NavigationBar from "../../components/Booking Module/NavigationBar";
+import {BookLocationForm} from "../../components/Booking Module/BookLocationForm";
 
 export class Booking extends Component {
     render() {
         return (
             <div>
                 < NavigationBar/>
-                <div>
-                </div>
+                <BookLocationForm/>
             </div>
         );
     }

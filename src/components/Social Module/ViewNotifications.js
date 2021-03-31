@@ -4,8 +4,8 @@ import {Container, Card, Button, Modal} from "react-bootstrap";
 import client from "../../API/api";
 import {toTitleCase} from "../../helpers";
 import "../../index.css";
-import {Post} from "./Post";
-import {NotificationManager} from "react-notifications";
+import Post from "./Post";
+import EventBus from "../../EventBus";
 
 export class ViewNotifications extends Component {
     constructor(props) {
@@ -18,13 +18,7 @@ export class ViewNotifications extends Component {
     }
 
     componentDidMount() {
-        let temp = {}
-        client.social.getNotificationsByEmail({email: this.props.email}).then(res => {
-            res.data.forEach(notification => {
-                temp[notification.id] = notification
-            })
-            this.setState({notifications: temp})
-        })
+        this.getNotifications()
     }
 
     handleClose = () => {
@@ -42,7 +36,16 @@ export class ViewNotifications extends Component {
         client.social.deleteNotification({id}).then( res => {
             delete temp[id]
             this.setState({bookings: temp})
-            NotificationManager.success("Notification deleted.")
+        })
+    }
+
+    getNotifications = () => {
+        let temp = {}
+        client.social.getNotificationsByEmail({email: this.props.email}).then(res => {
+            res.data.forEach(notification => {
+                temp[notification.id] = notification
+            })
+            this.setState({notifications: temp})
         })
     }
 

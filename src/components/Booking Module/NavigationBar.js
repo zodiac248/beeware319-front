@@ -9,7 +9,7 @@ export class NavigationBar extends Component {
         return (
             <NavDropdown title={this.props.username} id="basic-nav-dropdown" >
                 <Nav.Link as={Link} to="/user">Profile</Nav.Link>
-                <a href="https://beeware319.herokuapp.com//logout">Logout</a>
+                <a href="https://beeware319.azurewebsites.net/logout">Logout</a>
             </NavDropdown>
         )
     }

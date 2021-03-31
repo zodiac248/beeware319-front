@@ -1,12 +1,12 @@
 import React, {Component} from "react";
-import {Button, Form, Container, ModalBody, Modal, FormGroup, Col} from "react-bootstrap";
+import {Button, Form, ModalBody, Modal, FormGroup, Col} from "react-bootstrap";
 import {connect} from "react-redux";
 import client from "../../API/api";
 import {NotificationManager} from "react-notifications";
 import * as BiIcons from "react-icons/io";
 import {toTitleCase} from "../../helpers";
 import {Row} from "react-bootstrap";
-import {Post} from "./Post";
+import Post from "./Post";
 
 
 export class AddPostModal extends Component {
@@ -14,11 +14,18 @@ export class AddPostModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            show: false, topicID: "", topics: [], postTitle: "", content: "", postId: -1
+            show: false, topicId: -1 , topics: [], postTitle: "", content: "", postId: -1
         }
     }
 
     componentDidMount() {
+        if (this.props.topicId) {
+            client.social.getTopic({id: this.props.topicId}).then(res => {
+                const topic = res.data
+                this.setState({topicId: topic.id, topics: [topic]})
+            })
+            return;
+        }
         client.social.getTopics().then(res => {
             this.setState({topics: res.data})
         });
@@ -28,22 +35,15 @@ export class AddPostModal extends Component {
         event.preventDefault();
         const payload = {
             email: this.props.email,
-            topicId: this.state.topicID,
+            topicId: this.state.topicId,
             content: this.state.content,
             title: this.state.postTitle
         }
-        if (payload.topicId === "") {
-            NotificationManager.warning("Please select a topic.")
-        } else if (payload.title === "") {
-            NotificationManager.warning("Please fill in the title.")
-        } else if (payload.content === "") {
-            NotificationManager.warning("Please fill in your post.")
-        } else if (payload.email === "" || payload.email === null) {
-            NotificationManager.error("Warning! Unauthorized access!")
+        if (payload.topicId === -1 || payload.title === "" || payload.content === "" || payload.email === "") {
+            NotificationManager.error("Please fill out all fields!")
         } else {
             payload.title = toTitleCase(payload.title)
             client.social.addPost(payload).then(res => {
-                NotificationManager.success("New post added!")
                 this.setState({postId: res.data})
             });
         }
@@ -59,7 +59,7 @@ export class AddPostModal extends Component {
 
     setTopicsID = (e) => {
         const selectedIndex = e.target.options.selectedIndex;
-        this.setState({topicID: e.target.options[selectedIndex].getAttribute('data-key')})
+        this.setState({topicId: e.target.options[selectedIndex].getAttribute('data-key')})
     }
 
 
@@ -93,7 +93,8 @@ export class AddPostModal extends Component {
                                         <Form.Control
                                             onChange={this.setTopicsID}
                                             as="select">
-                                            <option disabled selected="selected">Select a Topic</option>
+                                            {this.props.topicId? "" :
+                                                <option disabled selected="selected">Select a Topic</option>}
                                             {this.state.topics.map((value) => {
                                                 return (
                                                     <option
@@ -117,12 +118,12 @@ export class AddPostModal extends Component {
                                     </Col>
                                 </Form.Group>
                                 <FormGroup controlId={"text_area"}>
-                                    <Form.Label></Form.Label>
                                     <Form.Control
                                         onBlur={this.setContent}
                                         as="textarea" rows={10}
                                         placeholder={"What would you like to post about..."}
                                     />
+                                    <Form.Text className="text-muted"> 1024 characters max</Form.Text>
                                 </FormGroup>
                                 <Button variant="outline-secondary" type="submit">Submit</Button>
                             </Form>

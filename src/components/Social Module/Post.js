@@ -22,7 +22,7 @@ export class Post extends Component {
 
     handleDelete = (e) => {
         e.preventDefault()
-        client.social.get({id: this.post.id}).then(res => {
+        client.social.deletePosting({id: this.state.post.id}).then(res => {
             this.setState({post: null})
         })
     }
@@ -39,23 +39,33 @@ export class Post extends Component {
                 </Card.Header>
                 <Card.Body className="card-view-border">
                     <Card.Text>
-                        {this.state.post.content}
+                        {this.state.post.content.split('\n').map(function (line) {
+                            return (
+                                <>
+                                    {line}
+                                    <br/>
+                                </>
+                            )
+                        })}
+                    </Card.Text>
+
+                    <Card.Text className={"text-muted"}>
+                        {this.state.post.date.substring(0, 10)}
                     </Card.Text>
                     {/*TODO: replace with actual image*/}
                     {/*<Card.Img variant="bottom"*/}
                     {/*          src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"/>*/}
-                </Card.Body>
-                {this.props.isAdmin
-                    ? <Card.Footer><Button
-                        variant="danger"
-                        size="sm"
-                        onClick={(e) => {
-                            this.handleDelete(e)
-                        }}
-                    >Delete</Button>
-                    </Card.Footer>
-                    : ""
+                {
+                    // TODO: wait for cascade to be implemented and re-enable post deletion
+                    // this.props.isAdmin
+                    // ? <Button
+                    //     variant="outline-danger"
+                    //     size="sm"
+                    //     onClick={this.handleDelete}
+                    // >Delete</Button>
+                    // : ""
                 }
+                </Card.Body>
             </Card>
         )
     }
@@ -63,7 +73,7 @@ export class Post extends Component {
 
 function mapStateToProps(state) {
     const {user} = state
-    return {email: user.email, username: user.username, isLoggedIn: user.isLoggedIn, isAdmin: user.isAdmin, fName: user.fName, lName: user.lName}
+    return {email: user.email, isAdmin: user.isAdmin}
 }
 
 export default connect(

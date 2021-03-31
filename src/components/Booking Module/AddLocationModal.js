@@ -1,7 +1,9 @@
 import React from "react";
-import {Button, Form, Container, ModalBody, Modal, Alert} from "react-bootstrap";
+import {Button, Form, Container, ModalBody, Modal, Col, Row} from "react-bootstrap";
 import {connect} from "react-redux";
 import client from "../../API/api";
+import {NotificationManager, NotificationContainer} from "react-notifications";
+import EventBus from "../../EventBus";
 
 
 export class AddLocationModal extends React.Component {
@@ -9,24 +11,24 @@ export class AddLocationModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            show: false, buildingName: "", buildingAddress: "", showConfirmation: false}
+            show: false, buildingName: "", buildingAddress: ""}
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
-
-        if ((this.state.buildingAddress || this.state.buildingName) === "") {
+        if (this.state.buildingAddress === "" || this.state.buildingName === "") {
+            NotificationManager.error("Please fill in all fields", "", 2000)
             return;
         }
-
         const payload = {
             name: this.state.buildingName,
             address: this.state.buildingAddress
         }
-
         client.booking.addBuilding(payload).then(res => {
-            this.handleOpenConfirmation()
-        });
+            NotificationManager.success(this.state.buildingName + " successfully added", "", 2000)
+            EventBus.dispatch("buildingAddDelete", null)
+			this.setState({buildingName: "", buildingAddress: ""})
+		})
     };
 
     handleShow = (e) => {
@@ -46,50 +48,34 @@ export class AddLocationModal extends React.Component {
         this.setState({...this.state, buildingAddress: e.target.value, showConfirmation: false})
     }
 
-    handleOpenConfirmation = () => {
-        this.setState({showConfirmation: true})
-    }
-
-    handleCloseConfirmation = () => {
-        this.setState({showConfirmation: false})
-    }
-
-    renderSuccessMessage() {
-        if (this.state.showConfirmation) {
-            return (
-                <Alert variant="success" onClose={this.handleCloseConfirmation} dismissible>
-                    <p>{this.state.buildingName} was added successfully!</p>
-                </Alert>
-            );
-        }
-    }
-
     render() {
         return (
             <div className="admin-modal">
+                <NotificationContainer />
                 <button className="btn btn-info" onClick={this.handleShow}>
                     Add Location
                 </button>
 
-                <Modal show={this.state.show} onHide={this.handleClose}>
+                <Modal show={this.state.show} onHide={this.handleClose} size={"lg"}>
                     <Modal.Header closeButton>
                         <Modal.Title>Add Location</Modal.Title>
                     </Modal.Header>
-                    {this.renderSuccessMessage()}
                     <ModalBody>
                         <Form onSubmit={this.handleSubmit}>
                             <Container fluid>
-                                <h1>Add Location </h1>
-                                <Form.Group controlId="formGridBuilding">
-                                    <Form.Label>Building Name</Form.Label>
-                                    <Form.Control type="text" onChange={this.setBuilding}
+                                <Form.Group as={Row}>
+                                    <Form.Label column sm={3}>Building Name</Form.Label>
+                                    <Col sm={9}>
+                                    <Form.Control type="text" onChange={this.setBuilding} value={this.state.buildingName}
                                                   placeholder="Enter building name"/>
+                                    </Col>
                                 </Form.Group>
-
-                                <Form.Group controlId="formGridbuildingAddress">
-                                    <Form.Label>Address</Form.Label>
-                                    <Form.Control type="text" onChange={this.setBuildingAddress}
+                                <Form.Group as={Row}>
+                                    <Form.Label  column sm={3}>Address</Form.Label>
+                                    <Col sm={9}>
+                                    <Form.Control type="text" value={this.state.buildingAddress} onChange={this.setBuildingAddress}
                                                   placeholder="Enter address"/>
+                                    </Col>
                                 </Form.Group>
                                 <Button variant="primary" type="submit">Add</Button>
                             </Container>

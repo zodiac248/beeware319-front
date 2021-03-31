@@ -6,6 +6,11 @@ h2 {
   text-transform: uppercase;
 }
 
+h4 {
+  color: dimgrey;
+  font-family: "Arial", sans-serif;
+}
+
 .heading {
   position: relative;
   top: 200px;

@@ -12,7 +12,7 @@ export class ManageBookingsForm extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {date: "", bookings: {}}
+        this.state = {date: "", bookings: []}
     }
 
     handleDateChange = (e) => {
@@ -27,12 +27,10 @@ export class ManageBookingsForm extends Component {
     handleDelete = (e) => {
         e.preventDefault()
         let temp = this.state.bookings
-        Object.keys(this.state.bookings).forEach(key => {
-            let booking = this.state.bookings[key]
+        this.state.bookings.forEach(booking => {
             if (booking.checked) {
                 client.booking.deleteBooking({id: booking.id}).then(res => {
-                    delete temp[key]
-                    this.setState({bookings: temp})
+                    this.getBookings()
                 })
             }
         })
@@ -42,16 +40,19 @@ export class ManageBookingsForm extends Component {
     handleCheck = (e, booking) => {
         let temp = this.state.bookings
         booking.checked = e.target.checked
-        temp[booking.id] = booking
         this.setState({bookings: temp})
     }
 
     componentDidMount() {
-        let temp = {}
+        this.getBookings()
+    }
+
+    getBookings = () => {
+        let temp = []
         client.booking.getBookings({email: this.props.email}).then(res => {
             res.data.forEach(booking => {
                 booking['checked'] = false
-                temp[booking.id] = booking
+                temp.push(booking)
             })
             this.setState({bookings: temp})
         })
@@ -75,7 +76,7 @@ export class ManageBookingsForm extends Component {
                     </Col>
                     <Col sm={2}>
                     <Button variant="outline-danger"
-                            className="position-fixed"
+                            className="position-absolute"
                             onClick={this.handleDelete}>
                         Delete Selected
                     </Button>
@@ -90,8 +91,7 @@ export class ManageBookingsForm extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {Object.keys(this.state.bookings).map((key) => {
-                        const booking = this.state.bookings[key]
+                    {this.state.bookings.map((booking) => {
                         if (this.state.date && booking.date.substr(0, 10) !== this.state.date) {
                             return ""
                         }
