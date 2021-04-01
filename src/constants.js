@@ -5,7 +5,7 @@ import ViewPosts from "./components/Social Module/ViewPosts";
 import ViewCategories from "./components/Social Module/ViewTopics";
 import ViewNotifications from "./components/Social Module/ViewNotifications";
 
-export const baseUrl = "https://beeware319.azurewebsites.net"
+export const baseUrl = "https://beeware319be.azurewebsites.net"
 
 export const roles = {
     admin: "admin",
