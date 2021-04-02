@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import NavigationBar from "../../components/Booking Module/NavigationBar";
+import NavigationBar from "../../components/General/NavigationBar";
 
 export class User extends Component {
     render() {
@@ -17,8 +17,8 @@ export class User extends Component {
 }
 
 function mapStateToProps(state) {
-    const {user} = state
-    return {username: user.username, isLoggedIn: user.isLoggedIn, isAdmin: user.isAdmin, fName: user.fName, lName: user.lName}
+    const {auth} = state
+    return {isLoggedIn: auth.isLoggedIn, isAdmin: auth.isAdmin, fName: auth.fName, lName: auth.lName}
 }
 
 export default connect(

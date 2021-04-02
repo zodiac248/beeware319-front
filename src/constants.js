@@ -5,14 +5,11 @@ import ViewPosts from "./components/Social Module/ViewPosts";
 import ViewCategories from "./components/Social Module/ViewTopics";
 import ViewNotifications from "./components/Social Module/ViewNotifications";
 
-export const baseUrl = "https://beeware319be.azurewebsites.net"
+export const baseUrl = "https://beeware319.herokuapp.com"
 
 export const roles = {
-    admin: "admin",
-    employee: "employee"
+    admin: "Admin"
 }
-
-export const advancedDateRange = 183
 
 export const dateFormat = 'YYYY-MM-DD'
 

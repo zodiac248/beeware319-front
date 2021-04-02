@@ -1,15 +1,15 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
-import {Nav, Navbar, NavDropdown} from "react-bootstrap";
+import {Button, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {connect} from "react-redux";
 import "./NavigationBar.css"
 
 export class NavigationBar extends Component {
     renderUserNav() {
         return (
-            <NavDropdown title={this.props.username} id="basic-nav-dropdown" >
+            <NavDropdown title={this.props.name} id="basic-nav-dropdown" >
                 <Nav.Link as={Link} to="/user">Profile</Nav.Link>
-                <a href="https://beeware319.azurewebsites.net/logout">Logout</a>
+                <a href="#" onClick={this.props.logout}> Logout </a>
             </NavDropdown>
         )
     }
@@ -39,25 +39,27 @@ export class NavigationBar extends Component {
                         <Nav.Link as={Link} to="/social">Social</Nav.Link>
                         <Nav.Link as={Link} to="/">Mail Management</Nav.Link>
                         {this.props.isAdmin
-                        ? this.renderAdminNav()
+                        ?this.renderAdminNav()
                         : ""}
                     </Nav>
-                    {this.props.isLoggedIn
-                        ? this.renderUserNav()
-                        : <Nav.Link as={Link} to="/login">Login</Nav.Link>}
+                    {this.renderUserNav()}
                 </Navbar.Collapse>
             </Navbar>
         )
     }
 }
-
+function mapDispatchToProps(dispatch) {
+    return {
+        logout: () => dispatch({type: 'auth/logout'}),
+    }
+}
 
 function mapStateToProps(state) {
-    const {user} = state
-    return {username: user.username, isLoggedIn: user.isLoggedIn, isAdmin: user.isAdmin, fName: user.fName, lName: user.lName}
+    const {auth} = state
+    return {name: auth.name, isAdmin: auth.isAdmin, email: auth.email}
 }
 
 export default connect(
     mapStateToProps,
-    null
+    mapDispatchToProps
 )(NavigationBar);

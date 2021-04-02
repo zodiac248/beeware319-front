@@ -9,7 +9,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -21,8 +23,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }
@@ -35,19 +38,9 @@ export default class socialClient {
         } catch (e) {
             console.log(e)
 
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
-            return Promise.reject()
-        }
-    }
-
-    static async getAllPostings() {
-        try {
-            const response = await axios.get(baseUrl + "/posting", {withCredentials: true});
-            return response
-        } catch (e) {
-            console.log(e)
-            store.dispatch({type: "error/newError",payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -60,7 +53,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -72,7 +67,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -85,7 +82,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -97,7 +96,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -109,7 +110,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -121,7 +124,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -133,7 +138,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -145,7 +152,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -158,8 +167,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }
@@ -171,7 +181,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -183,7 +195,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -195,7 +209,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -207,7 +223,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -220,7 +238,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -232,8 +252,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }

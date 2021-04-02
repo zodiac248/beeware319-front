@@ -132,8 +132,8 @@ export class ViewTopics extends Component {
 
 
 function mapStateToProps(state) {
-    const {user} = state
-    return {email: user.email, username: user.username, isLoggedIn: user.isLoggedIn, isAdmin: user.isAdmin, fName: user.fName, lName: user.lName}
+    const {auth} = state
+    return {name: auth.name, isAdmin: auth.isAdmin, email: auth.email}
 }
 
 export default connect(

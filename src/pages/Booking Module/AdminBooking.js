@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import NavigationBar from "../../components/Booking Module/NavigationBar";
+import NavigationBar from "../../components/General/NavigationBar";
 import {FloorSummaryModal} from "../../components/Booking Module/FloorSummaryModal";
 import {UpdateLocationModal} from "../../components/Booking Module/UpdateLocationModal";
 import {AddLocationModal} from "../../components/Booking Module/AddLocationModal";

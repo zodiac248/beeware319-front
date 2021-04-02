@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import './App.css';
-import NavigationBar from "./components/Booking Module/NavigationBar"
+import NavigationBar from "./components/General/NavigationBar"
 import {Link} from "react-router-dom";
 import {Card} from "react-bootstrap";
 

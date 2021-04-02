@@ -56,14 +56,13 @@ export class Post extends Component {
                     {/*<Card.Img variant="bottom"*/}
                     {/*          src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"/>*/}
                 {
-                    // TODO: wait for cascade to be implemented and re-enable post deletion
-                    // this.props.isAdmin
-                    // ? <Button
-                    //     variant="outline-danger"
-                    //     size="sm"
-                    //     onClick={this.handleDelete}
-                    // >Delete</Button>
-                    // : ""
+                    this.props.isAdmin
+                    ? <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={this.handleDelete}
+                    >Delete</Button>
+                    : ""
                 }
                 </Card.Body>
             </Card>
@@ -72,8 +71,8 @@ export class Post extends Component {
 }
 
 function mapStateToProps(state) {
-    const {user} = state
-    return {email: user.email, isAdmin: user.isAdmin}
+    const {auth} = state
+    return {name: auth.name, isAdmin: auth.isAdmin, email: auth.email}
 }
 
 export default connect(

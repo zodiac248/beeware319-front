@@ -2,11 +2,12 @@ import React, {Component} from "react";
 import {Button, Modal, Form, Table} from "react-bootstrap";
 import client from "../../API/api";
 import EventBus from "../../EventBus";
+import {NotificationManager, NotificationContainer} from "react-notifications";
 
 export class FloorSummaryModal extends Component {
     constructor(props) {
         super(props);
-        this.state = {show: false, date: "", buildings: [], floors: [], currentBuildingId: -1}
+        this.state = {show: false, date: null, buildings: [], floors: [], currentBuildingId: null}
     }
 
     handleClose = () => {
@@ -23,12 +24,21 @@ export class FloorSummaryModal extends Component {
     }
 
     handleBuildingChange = (e) => {
+        if (!this.state.date) {
+            NotificationManager.warning("Please select a date first")
+            this.setState({currentBuildingId: null})
+            return;
+        }
         const selectedIndex = e.target.options.selectedIndex;
         let buildingId = e.target.options[selectedIndex].getAttribute('data-key')
         this.setState({currentBuildingId: buildingId}, this.getFloors)
     }
 
     getFloors = () => {
+        if (!this.state.currentBuildingId) {
+            this.setState({floors: []})
+            return;
+        }
         client.booking.getFloors({buildingId: this.state.currentBuildingId}).then(res => {
             let floors = res.data
             floors.forEach(floor => {
@@ -62,6 +72,7 @@ export class FloorSummaryModal extends Component {
         // this is just a sample, using bootstrap react, change as needed
         return (
             <div className="admin-modal">
+                <NotificationContainer />
                 <button className="btn btn-info" onClick={this.handleOpen}> View Bookings Summary</button>
                 <Modal show={this.state.show} onHide={this.handleClose} size="lg">
                     <Modal.Header closeButton>

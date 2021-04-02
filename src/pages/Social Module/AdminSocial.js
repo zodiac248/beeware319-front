@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import NavigationBar from "../../components/Booking Module/NavigationBar";
+import NavigationBar from "../../components/General/NavigationBar";
 import AddTopicModal from "../../components/Social Module/AddTopicModal";
 
 export class AdminSocial extends Component {

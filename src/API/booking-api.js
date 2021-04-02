@@ -5,7 +5,7 @@ import store from "../store";
 export default class bookingClient {
     static async getBuildings() {
         try {
-            const response = await axios.get(baseUrl + "/building/all", {withCredentials: true});
+            const response = await axios.get(baseUrl + "/building/all");
             return response
         } catch (e) {
             console.log(e)
@@ -15,7 +15,7 @@ export default class bookingClient {
     }
     static async getBuilding(id) {
         try {
-            const response = await axios.get(baseUrl + "/building", {withCredentials: true, params: {id}} );
+            const response = await axios.get(baseUrl + "/building", {params: {id}} );
             return response
         } catch (e) {
             console.log(e)
@@ -26,10 +26,12 @@ export default class bookingClient {
 
     static async addBuilding({name, address}) {
         try {
-            const response = await axios.post(baseUrl + "/building", {name, address}, {withCredentials: true});
+            const response = await axios.post(baseUrl + "/building", {name, address});
             return response
         } catch (e) {
-            store.dispatch({type: "error/newError", payload: e.response.data});
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            };
             return Promise.reject()
         }
 
@@ -37,11 +39,13 @@ export default class bookingClient {
 
     static async updateBuilding({id, name, address}) {
         try {
-            const response = await axios.put(baseUrl + "/building", {id, name, address}, {withCredentials: true});
+            const response = await axios.put(baseUrl + "/building", {id, name, address});
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -61,35 +65,39 @@ export default class bookingClient {
 
     static async getFloors({buildingId}) {
         try {
-            const response = await axios.get(baseUrl + "/floor", {withCredentials: true, params: {buildingId}})
+            const response = await axios.get(baseUrl + "/floor", {params: {buildingId}})
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }
 
     static async getFloorInfo(floorID, date) {
         try {
-            const response = await axios.get(baseUrl + "/floor/info", {withCredentials: true, params: {id: floorID, date: date}})
+            const response = await axios.get(baseUrl + "/floor/info", {params: {id: floorID, date: date}})
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }
 
     static async addFloor({floorNumber, buildingId, deskIds}) {
         try {
-            const response = await axios.post(baseUrl + "/floor", {floorNumber, buildingId, deskIds}, {withCredentials: true});
+            const response = await axios.post(baseUrl + "/floor", {floorNumber, buildingId, deskIds});
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -97,23 +105,27 @@ export default class bookingClient {
 
     static async updateFloor({id, floorNumber, buildingId}) {
         try {
-            const response = await axios.put(baseUrl + "/floor", {id, floorNumber, buildingId}, {withCredentials: true});
+            const response = await axios.put(baseUrl + "/floor", {id, floorNumber, buildingId});
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
     }
 
-    static async deleteFloor(id) {
+    static async deleteFloor({id}) {
         try {
-            const response = await axios.delete(baseUrl + "/floor", {withCredentials: true, params: {id}});
+            const response = await axios.delete(baseUrl + "/floor", {data: {id}});
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -121,11 +133,13 @@ export default class bookingClient {
 
     static async getDesks(floorID) {
         try {
-            const response = await axios.get(baseUrl + "/desk", {withCredentials: true, params: {floorId: floorID}})
+            const response = await axios.get(baseUrl + "/desk", {params: {floorId: floorID}})
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
@@ -133,36 +147,38 @@ export default class bookingClient {
 
     static async updateDesks({id, floorNumber, deskNumbers}) {
         try {
-            const response = await axios.put(baseUrl + "/floor", {id, floorNumber, deskNumbers}, {withCredentials: true});
+            const response = await axios.put(baseUrl + "/floor", {id, floorNumber, deskNumbers});
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }
     }
 
-    static async makeBooking({employeeId, deskId, date}) {
+    static async getBookingsByDeskId({deskId}) {
         try {
-            const response = await axios.post(baseUrl + "/booking", {employeeId, deskId, date}, {withCredentials: true});
+            const response = await axios.get(baseUrl + "/booking/deskId", {params: {deskId}});
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
+            store.dispatch({type: "error/newError", payload: "Unexpected error, please try again later"})
             return Promise.reject()
         }
     }
 
-    static async updateBooking({id, deskId, employeeId, date}) {
+    static async makeBooking({deskId, email,  date, range}) {
         try {
-            const response = await axios.put(baseUrl + "/booking", {id, deskId, employeeId, date}, {withCredentials: true});
+            const response = await axios.post(baseUrl + "/booking", {deskId, email,  date, range});
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }
@@ -173,8 +189,9 @@ export default class bookingClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
-
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }
@@ -186,7 +203,9 @@ export default class bookingClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: e.response.data})
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
 
             return Promise.reject()
         }

@@ -97,8 +97,8 @@ export class ViewNotifications extends Component {
 }
 
 function mapStateToProps(state) {
-    const {user} = state
-    return {email: user.email}
+    const {auth} = state
+    return {name: auth.name, isAdmin: auth.isAdmin, email: auth.email}
 }
 
 export default connect(

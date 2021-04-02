@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import NavigationBar from "../../components/Booking Module/NavigationBar";
-import {BookLocationForm} from "../../components/Booking Module/BookLocationForm";
+import NavigationBar from "../../components/General/NavigationBar";
+import BookLocationForm from "../../components/Booking Module/BookLocationForm";
 
 export class Booking extends Component {
     render() {
@@ -15,14 +15,8 @@ export class Booking extends Component {
 
 }
 
-
-function mapStateToProps(state) {
-    const {user} = state
-    return {uid: user.uid, isLoggedIn: user.isLoggedIn}
-}
-
 export default connect(
-    mapStateToProps,
+    null,
     null
 )(Booking);
 

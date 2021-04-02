@@ -125,8 +125,8 @@ export class ManageBookingsForm extends Component {
 }
 
 function mapStateToProps(state) {
-    const {user} = state
-    return {email: user.email}
+    const {auth} = state
+    return {email: auth.email}
 }
 
 export default connect(

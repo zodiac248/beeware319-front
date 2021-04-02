@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import NavigationBar from "../../components/Booking Module/NavigationBar";
+import NavigationBar from "../../components/General/NavigationBar";
 import ManageBookingsForm from "../../components/Booking Module/ManageBookingsForm";
 
 function ViewBookings() {

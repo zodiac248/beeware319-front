@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Container} from 'react-bootstrap';
-import NavigationBar from "../../components/Booking Module/NavigationBar";
+import NavigationBar from "../../components/General/NavigationBar";
 import EmployeeViewWindow from "../../components/Social Module/EmployeeViewWindow";
 import 'react-notifications/lib/notifications.css';
 import {NotificationContainer} from "react-notifications";
@@ -20,12 +20,7 @@ export class Social extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    const {user} = state
-    return {uid: user.uid, isLoggedIn: user.isLoggedIn}
-}
-
 export default connect(
-    mapStateToProps,
+    null,
     null
 )(Social);

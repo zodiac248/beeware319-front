@@ -52,8 +52,8 @@ export class ViewPosts extends Component {
 }
 
 function mapStateToProps(state) {
-    const {user} = state
-    return {email: user.email, username: user.username, isLoggedIn: user.isLoggedIn, isAdmin: user.isAdmin, fName: user.fName, lName: user.lName}
+    const {auth} = state
+    return {email: auth.email, isLoggedIn: auth.isLoggedIn, isAdmin: auth.isAdmin}
 }
 
 export default connect(
