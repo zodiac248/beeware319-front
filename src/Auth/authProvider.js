@@ -1,12 +1,14 @@
 import {MsalAuthProvider, LoginType} from 'react-aad-msal';
+import client from "../API/api";
 const config = {
     auth: {
         authority: "https://login.microsoftonline.com/organizations",
         clientId: "15864755-4d92-416f-885d-20beb599d799",
-        postLogoutRedirectUri: window.location.origin,
-        redirectUri: window.location.origin,
+        postLogoutRedirectUri: "https://beeware319-front.herokuapp.com",
+        redirectUri: "https://beeware319-front.herokuapp.com",
         validateAuthority: true,
-        navigateToLoginRequestUrl: true
+        navigateToLoginRequestUrl: true,
+        storeAuthStateInCookie: false
     },
     cache: {
         cacheLocation: "sessionStorage",
@@ -22,9 +24,8 @@ const authenticationParameters = {
 
 const options = {
     loginType: LoginType.Redirect,
-    tokenRefreshUri: 'localhost:3000/auth.html'
+    tokenRefreshUri: 'https://beeware319-front.herokuapp.com/auth.html'
 }
 
 export const authProvider = new MsalAuthProvider(config, authenticationParameters, options);
-
 

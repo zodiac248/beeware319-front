@@ -15,7 +15,6 @@ export class FloorSummaryModal extends Component {
     }
 
     handleOpen = () => {
-        this.getBuildings()
         this.setState({show: true})
     }
 
@@ -88,9 +87,6 @@ export class FloorSummaryModal extends Component {
                                           name="date"
                                           placeholder="Date"
                             />
-                            <Form.Text className="text-muted">
-                                If blank, results returned for the current date
-                            </Form.Text>
                         </Form.Group>
 
                         <Form.Group controlId="modalSummary.buildingSelect">

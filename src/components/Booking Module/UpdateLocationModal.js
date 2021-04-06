@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Button, Modal, Form, Col, Accordion, Card} from "react-bootstrap";
+import {Button, Modal, Form, Col, Accordion, Card, Image} from "react-bootstrap";
 import client from "../../API/api";
 import {Row} from "react-bootstrap";
 import {NotificationManager, NotificationContainer} from "react-notifications";
@@ -8,37 +8,68 @@ import EventBus from "../../EventBus";
 export class UpdateLocationModal extends Component {
     constructor(props) {
         super(props);
-        this.state = {show: false, date: "", buildings: [], floors: {}, desks: {}, currentBuildingId: null, newFloorNum: ""}
+        this.state = {
+            show: false,
+            date: "",
+            buildings: [],
+            floors: {},
+            desks: {},
+            currentBuildingId: null,
+            newFloorNum: "",
+            newFloorImage: ""
+        }
     }
 
     handleClose = () => {
-        this.setState({show: false})
+        this.setState({show: false, currentBuildingId: null, floors: {}, desks: {}, newFloorNum: "",
+            newFloorImage: ""})
     }
 
     handleOpen = () => {
         this.setState({show: true})
     }
 
-    handleNewFloorChange = (e) => {
+    handleNewFloorNumberChange = (e) => {
         this.setState({newFloorNum: e.target.value})
+    }
+
+    handleNewFloorImageChange = (e) => {
+        let file = e.target.files[0]
+        let reader = new FileReader()
+        reader.onload = (ev) => {
+            this.setState({newFloorImage: ev.target.result.split(',')[1]})
+        }
+        reader.readAsDataURL(file)
+        NotificationManager.success("Image successfully uploaded")
     }
 
     addFloor = (e) => {
         const floorNumber = this.state.newFloorNum
+        const floorImage = this.state.newFloorImage
         if (floorNumber === "") {
             NotificationManager.error("Please fill in a floor number")
+        } else if (floorImage === "") {
+            NotificationManager.error("Please add an image for the floor")
         } else {
-            client.booking.addFloor({floorNumber: floorNumber,
-                buildingId: this.state.currentBuildingId, deskIds: ""}).then(() => {
-                    this.setState({newFloorNum: ""})
-                    this.getFloors()
+            client.booking.addFloor({
+                floorNumber: floorNumber,
+                buildingId: this.state.currentBuildingId,
+                deskNumbers: "",
+                image: floorImage
+            }).then(() => {
+                NotificationManager.success("New floor added")
+                document.getElementById('floorimageinput').value = null
+            }).then(() => {
+                this.setState({newFloorNum: "", newFloorImage: ""})
+                this.getFloors()
             })
         }
     }
+
     updateDesks = (e, floorId) => {
         let floors = this.state.floors
         let floor = this.state.floors[floorId]
-        floor.desks = e.target.value
+        floor.desks = e.target.value.trim()
         floors[floorId] = floor
         this.setState({floors: floors})
     }
@@ -46,9 +77,13 @@ export class UpdateLocationModal extends Component {
     updateFloor = (e, floorId) => {
         e.preventDefault()
         const floor = this.state.floors[floorId]
-        client.booking.updateDesks({id: floorId, floorNumber: floor.floorNumber, deskNumbers: floor.desks})
-            .then(res => {
-                NotificationManager.success("Saved")
+        client.booking.updateFloor({
+            id: floorId,
+            floorNumber: floor.floorNumber,
+            deskNumbers: floor.desks,
+            image: floor.image
+        }).then(res => {
+                NotificationManager.success("Saved", "", 2000)
             })
     }
 
@@ -81,12 +116,26 @@ export class UpdateLocationModal extends Component {
         this.setState({floors: floors})
     }
 
+    updateFloorImage = (e, floorId) => {
+        let floors = this.state.floors
+        let floor = this.state.floors[floorId]
+
+        let file = e.target.files[0]
+        let reader = new FileReader()
+        reader.onload = (ev) => {
+            floor.image = ev.target.result.split(',')[1]
+            floors[floorId] = floor
+            this.setState({floors: floors})
+        }
+        reader.readAsDataURL(file)
+    }
+
     handleBuildingChange = (e) => {
         const selectedIndex = e.target.options.selectedIndex;
         let buildingId = e.target.options[selectedIndex].getAttribute('data-key')
         this.setState({currentBuildingId: buildingId}, this.getFloors)
     }
-    
+
     getBuildings = () => {
         client.booking.getBuildings().then(res => {
             this.setState({buildings: res.data})
@@ -110,12 +159,13 @@ export class UpdateLocationModal extends Component {
                     tempFloors[floor.id] = {}
                     tempFloors[floor.id]["desks"] = temp.join(", ")
                     tempFloors[floor.id]["floorNumber"] = floor.floorNumber
+                    tempFloors[floor.id]["image"] = floor.image
                     this.setState({floors: tempFloors})
                 })
             })
         })
     }
-    
+
     componentDidMount() {
         this.getBuildings();
         EventBus.on("buildingAddDelete", (data) => {
@@ -130,7 +180,7 @@ export class UpdateLocationModal extends Component {
     render() {
         return (
             <div className="admin-modal">
-                <NotificationContainer />
+                <NotificationContainer/>
                 <button className="btn btn-info" onClick={this.handleOpen}> Update Locations</button>
                 <Modal show={this.state.show} onHide={this.handleClose} size="lg" scrollable={true}>
                     <Modal.Header closeButton>
@@ -149,11 +199,22 @@ export class UpdateLocationModal extends Component {
                         </Form.Group>
                         {this.state.currentBuildingId ?
                             <Form.Group as={Row}>
-                                <Col sm={10}>
-                                    <Form.Control type="text" placeholder="Floor No."  value={this.state.newFloorNum}
-                                                  onChange={this.handleNewFloorChange}/>
+                                <Col sm="5">
+                                    <Form.Control type="text" placeholder="Floor No." value={this.state.newFloorNum}
+                                                  onChange={this.handleNewFloorNumberChange}/>
                                 </Col>
-                                <Button onClick={this.addFloor}> Add Floor </Button>
+                                <Col sm="4">
+                                    <Form.File
+                                        style={{textAlign: "left"}}
+                                        id="floorimageinput"
+                                        label="Layout image"
+                                        accept="image/png,image/jpg,image/jpeg"
+                                        onChange={this.handleNewFloorImageChange}
+                                        custom/>
+                                </Col>
+                                <Col sm="3">
+                                    <Button style={{marginLeft: '50px'}} onClick={this.addFloor}> Add Floor </Button>
+                                </Col>
                             </Form.Group>
                             : ""}
                         <Accordion>
@@ -181,7 +242,21 @@ export class UpdateLocationModal extends Component {
                                                     </Form.Group>
                                                 </Row>
                                                 <Form.Group as={Row}>
-                                                    <Form.Label column sm="2" style={{textAlign: 'left'}}> Desks </Form.Label>
+                                                    <Form.Label column sm="2">
+                                                        Floor Image
+                                                    </Form.Label>
+                                                    <Form.File custom
+                                                               label={"Upload"}
+                                                               accept="image/png,image/jpg,image/jpeg"
+                                                               onChange={(e) => {
+                                                                   this.updateFloorImage(e, floorId)
+                                                               }}/>
+                                                    <Image src={"data:image/jpg;base64, " + floor.image}
+                                                         className="img-thumbnail"/>
+                                                </Form.Group>
+                                                <Form.Group as={Row}>
+                                                    <Form.Label column sm="2"
+                                                                style={{textAlign: 'left'}}> Desks </Form.Label>
                                                     <Form.Control as="textarea"
                                                                   onChange={(e) => {
                                                                       this.updateDesks(e, floorId)
@@ -192,7 +267,7 @@ export class UpdateLocationModal extends Component {
                                                     </Form.Text>
                                                 </Form.Group>
 
-                                                <Button style={{marginRight: '10px'}}onClick={(e) => {
+                                                <Button style={{marginRight: '10px'}} onClick={(e) => {
                                                     this.updateFloor(e, floorId)
                                                 }} type="submit" className="mb-2">
                                                     Save
@@ -211,7 +286,7 @@ export class UpdateLocationModal extends Component {
                         </Accordion>
                     </Modal.Body>
                     <Modal.Footer>
-                        {this.state.currentBuildingId?
+                        {this.state.currentBuildingId ?
                             <Button variant={"danger"} onClick={this.deleteBuilding} type="submit" className="mb-2">
                                 Delete Building
                             </Button> :

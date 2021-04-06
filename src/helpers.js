@@ -1,9 +1,15 @@
 import moment from "moment";
 
 export function toTitleCase(str) {
+    if (typeof str !== 'string') return ''
     return str.replace(/\w\S*/g, function(txt){
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
+}
+
+export function capitalizeFirst(str) {
+    if (typeof str !== 'string') return ''
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 export function isInclusivelyAfterDay(a, b) {

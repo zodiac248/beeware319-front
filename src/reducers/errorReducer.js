@@ -7,7 +7,7 @@ export const errorSlice = createSlice({
     reducers: {
         newError: (state, action) => {
             state.error = action.payload
-            NotificationManager.error(action.payload)
+            NotificationManager.error(action.payload, "", 2000)
         },
     },
 });

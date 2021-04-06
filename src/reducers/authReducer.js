@@ -2,6 +2,7 @@ import { createStore } from '@reduxjs/toolkit';
 import { AuthenticationActions, AuthenticationState } from 'react-aad-msal';
 import {authProvider} from "../Auth/authProvider";
 import {roles} from "../constants";
+import client from "../API/api";
 
 const initialState = {
     initializing: false,
@@ -31,6 +32,7 @@ const authReducer = (state = initialState, action) => {
                 initialized: true,
             };
         case AuthenticationActions.AcquiredIdTokenSuccess:
+            client.user.getAccessToken()
             return {
                 ...state,
                 idToken: action.payload.idToken.rawIdToken,

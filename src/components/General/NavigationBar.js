@@ -19,7 +19,7 @@ export class NavigationBar extends Component {
             <NavDropdown title="Admin" id="basic-nav-dropdown">
                 <NavDropdown.Item as={Link} to="/admin/booking">Manage Bookings</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/admin/social">Manage Social</NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/">Manage Mail Requests</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/admin/mail">Manage Mail Requests</NavDropdown.Item>
             </NavDropdown>
         )
     }
@@ -37,7 +37,7 @@ export class NavigationBar extends Component {
                             <NavDropdown.Item as={Link} to="/mybookings">My Bookings</NavDropdown.Item>
                         </NavDropdown>
                         <Nav.Link as={Link} to="/social">Social</Nav.Link>
-                        <Nav.Link as={Link} to="/">Mail Management</Nav.Link>
+                        <Nav.Link as={Link} to="/mail">Manage Mail/Requests</Nav.Link>
                         {this.props.isAdmin
                         ?this.renderAdminNav()
                         : ""}

@@ -3,7 +3,8 @@ import React from 'react';
 import './App.css';
 import NavigationBar from "./components/General/NavigationBar"
 import {Link} from "react-router-dom";
-import {Card} from "react-bootstrap";
+import {Button, Card} from "react-bootstrap";
+import client from "./API/api";
 
 function App() {
     return (
@@ -31,7 +32,7 @@ function App() {
                     <div className="links">
                         <Card style={{ minHeight: '175px'}}>
                             <Card.Body>
-                                <Card.Title><Link to="/" className="btn btn-info btn-lg links-btn"> MAIL </Link></Card.Title>
+                                <Card.Title><Link to="/mail" className="btn btn-info btn-lg links-btn"> MAIL </Link></Card.Title>
                                 <Card.Subtitle className="mb-2 text-muted">Manage your in-person mail</Card.Subtitle>
                             </Card.Body>
                         </Card>

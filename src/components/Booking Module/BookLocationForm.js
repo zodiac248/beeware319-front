@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Form, Button, Row, Col, Container, Figure, Modal, ModalFooter, FormGroup} from "react-bootstrap";
+import {Form, Button, Row, Col, Container, Figure, Modal, ModalFooter, FormGroup, Image} from "react-bootstrap";
 import moment from 'moment'
 import {dateFormat} from "../../constants";
 import {NotificationContainer, NotificationManager} from 'react-notifications';
@@ -25,7 +25,6 @@ export class BookLocationForm extends Component {
 
     componentDidMount() {
         this.getBuildings()
-
     }
 
     getBuildings = () => {
@@ -45,7 +44,7 @@ export class BookLocationForm extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault()
-        if (!this.state.startDate|| !this.state.buildingId|| !this.state.floorId || !this.state.desk) {
+        if (!this.state.startDate || !this.state.buildingId || !this.state.floorId || !this.state.desk) {
             NotificationManager.warning("Please complete all fields", "", 2000)
             return;
         }
@@ -66,14 +65,14 @@ export class BookLocationForm extends Component {
         for (let i = 0; i < range; i++) {
             payload.date = moment(this.state.startDate).add(i, 'days').format(dateFormat)
             client.booking.makeBooking(payload).then(res => {
-                NotificationManager.success("Booking for successful", "", 2000)
+                NotificationManager.success("Booking successful", "", 2000)
+                this.setState(JSON.parse((JSON.stringify(this.initialState))), this.getBuildings)
             })
         }
-        this.setState(JSON.parse((JSON.stringify(this.initialState))), this.getBuildings)
     }
 
     setDates = ({startDate, endDate}) => {
-        this.setState({startDate: startDate, endDate: endDate})
+        this.setState({startDate: startDate, endDate: endDate}, this.getDesks)
     }
 
     setLocationCode = (e) => {
@@ -90,27 +89,31 @@ export class BookLocationForm extends Component {
         this.setState({buildingId: buildingId}, this.getFloors)
     }
 
-    getFloors = ()  => {
+    getFloors = () => {
         if (!this.state.buildingId) {
-            this.setState({floors: []})
+            this.setState({floors: []}, this.setFloor(null))
             return
         }
         client.booking.getFloors({buildingId: this.state.buildingId}).then(res => {
-            this.setState({floors: res.data})
+            this.setState({floors: res.data, floorId: null, floorImage: ""}, this.getDesks)
         })
     }
 
     setFloor = (e) => {
-        if (this.state.floors.length === 0) {
+        if (!e || this.state.floors.length === 0) {
             this.setState({floorId: null})
+            return;
         }
         const selectedIndex = e.target.options.selectedIndex;
         let floorId = e.target.options[selectedIndex].getAttribute("data-key")
         this.setState({floorId: floorId}, this.getDesks)
+        if (selectedIndex > 0) {
+            this.setState({floorImage: this.state.floors[selectedIndex - 1].image})
+        }
     }
 
     getDesks = () => {
-        if (!this.state.startDate) {
+        if (!this.state.startDate || !this.state.buildingId || !this.state.floorId) {
             return;
         }
         let startDate = this.formatDate(this.state.startDate)
@@ -122,12 +125,12 @@ export class BookLocationForm extends Component {
                     temp.push(desk)
                 }
             })
-            this.setState({availableDesks: temp})
+            this.setState({availableDesks: temp, desk: null})
         })
     }
 
     focusDateChange = (focusedInput) => {
-        this.setState({ focusedInput })
+        this.setState({focusedInput})
     }
 
     setDeskIdAndNum = (e) => {
@@ -150,7 +153,7 @@ export class BookLocationForm extends Component {
         return (
             <div>
                 <NotificationContainer/>
-                <Container style={{marginTop: '10%' }}as={Row} fluid>
+                <Container style={{marginTop: '5%'}} as={Row} fluid>
                     <Container as={Col} fluid>
                         <h2>Book Your Location</h2>
                         <FormGroup>
@@ -167,88 +170,87 @@ export class BookLocationForm extends Component {
                                 showClearDates={true}
                             />
                         </FormGroup>
-                                <Form.Group as={Row}>
-                                    <Form.Label column sm={2}>
-                                        Building
-                                    </Form.Label>
-                                    <Col sm={10}>
-                                        <Form.Control
-                                            onChange={this.setBuilding}
-                                            as="select"
-                                            single>
-                                            <option selected>Select a building</option>
-                                            {this.state.buildings.map((building) => {
-                                                return <option
-                                                    key={building.id}
-                                                    data-key={building.id}
-                                                >{building.name}</option>
-                                            })}
-                                        </Form.Control>
-                                    </Col>
-                                </Form.Group>
+                        <Form.Group as={Row}>
+                            <Form.Label column sm={2}>
+                                Building
+                            </Form.Label>
+                            <Col sm={10}>
+                                <Form.Control
+                                    onChange={this.setBuilding}
+                                    as="select"
+                                    single>
+                                    <option selected>Select a building</option>
+                                    {this.state.buildings.map((building) => {
+                                        return <option
+                                            key={building.id}
+                                            data-key={building.id}
+                                        >{building.name}</option>
+                                    })}
+                                </Form.Control>
+                            </Col>
+                        </Form.Group>
 
-                                <Form.Group as={Row} controlId="formFloor">
-                                    <Form.Label column sm={2}>
-                                        Floor
-                                    </Form.Label>
-                                    <Col sm={10}>
-                                        <Form.Control
-                                            onChange={this.setFloor}
-                                            as="select">
-                                            <option selected>Select a floor</option>
-                                            {this.state.floors.map((floor) => {
-                                                if (this.state.floors.length === 0) {
-                                                    return ""
-                                                } else {
-                                                    return <option
-                                                        key={floor.id}
-                                                        data-key={floor.id}>
-                                                        {floor.floorNumber}</option>
-                                                }
-                                            })}
-                                        </Form.Control>
-                                    </Col>
-                                </Form.Group>
+                        <Form.Group as={Row} controlId="formFloor">
+                            <Form.Label column sm={2}>
+                                Floor
+                            </Form.Label>
+                            <Col sm={10}>
+                                <Form.Control
+                                    onChange={this.setFloor}
+                                    as="select">
+                                    <option selected>Select a floor</option>
+                                    {this.state.floors.map((floor) => {
+                                        if (this.state.floors.length === 0) {
+                                            return ""
+                                        } else {
+                                            return <option
+                                                key={floor.id}
+                                                data-key={floor.id}>
+                                                {floor.floorNumber}</option>
+                                        }
+                                    })}
+                                </Form.Control>
+                            </Col>
+                        </Form.Group>
 
-                                <Form.Group as={Row} controlId="formDesk">
-                                    <Form.Label column sm={2}>
-                                        Desk No.
-                                    </Form.Label>
-                                    <Col sm={10}>
-                                        <Form.Control
-                                            as="select"
-                                            onChange={this.setDeskIdAndNum}
-                                            single>
-                                            <option selected>Select a desk</option>
-                                            {this.state.availableDesks.map((desk, index) => {
-                                                if (this.state.availableDesks.length === 0) {
-                                                    return ""
-                                                } else {
-                                                    return <option
-                                                        key={desk.id}
-                                                        data-key={index}>
-                                                        {desk.deskNumber}</option>
-                                                }
-                                            })}
-                                        </Form.Control>
-                                    </Col>
-                                </Form.Group>
-                            <Button
-                                variant="primary"
-                                onClick={this.handleSubmit}>
-                                Submit
-                            </Button>
+                        <Form.Group as={Row} controlId="formDesk">
+                            <Form.Label column sm={2}>
+                                Desk No.
+                            </Form.Label>
+                            <Col sm={10}>
+                                <Form.Control
+                                    as="select"
+                                    onChange={this.setDeskIdAndNum}
+                                    single>
+                                    <option selected>Select a desk</option>
+                                    {this.state.availableDesks.map((desk, index) => {
+                                        if (this.state.availableDesks.length === 0) {
+                                            return ""
+                                        } else {
+                                            return <option
+                                                key={desk.id}
+                                                data-key={index}>
+                                                {desk.deskNumber}</option>
+                                        }
+                                    })}
+                                </Form.Control>
+                            </Col>
+                        </Form.Group>
+                        <Button
+                            variant="primary"
+                            onClick={this.handleSubmit}>
+                            Submit
+                        </Button>
                     </Container>
                     <Container as={Col} fluid if>
-                        {this.state.buildingId && this.state.floorId &&
-                        <Figure>
-                            <Figure.Image
-                                width={1000}
-                                height={1000}
-                                alt="No image for this floor"
-                                src="https://i.stack.imgur.com/y9DpT.jpg"
-                            />
-                        </Figure>
+                        {
+                            (this.state.buildingId && this.state.floorId && this.state.floorImage)
+                                ? <Image
+                                    fluid
+                                    alt="No image for this floor"
+                                    src={"data:image/jpg;base64, " + this.state.floorImage}
+                                />
+                                : "No image to display"
                         }
                     </Container>
                 </Container>
