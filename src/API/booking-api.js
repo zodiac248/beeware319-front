@@ -5,6 +5,7 @@ import store from "../store";
 export default class bookingClient {
     static async getBuildings() {
         let accessToken =  store.getState().auth.accessToken
+        alert(accessToken)
         try {
             const response = await axios.get(baseUrl + "/building/all",{headers: {Authorization: `Bearer ${accessToken}`}});
             return response
