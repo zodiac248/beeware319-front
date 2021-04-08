@@ -3,6 +3,7 @@ import {Button, Form, Row, Col, Modal} from "react-bootstrap";
 import {connect} from "react-redux";
 import client from "../../API/api";
 import EventBus from "../../EventBus";
+import {EVENT_BUS} from "../../constants";
 
 class AddTopicModal extends Component {
     initialState = {show: false, currTopic: "", topics: []}
@@ -49,7 +50,7 @@ class AddTopicModal extends Component {
     handleSubmit = () => {
         this.state.topics.forEach(topic => {
             client.social.addTopic({name: topic}).then(() => {
-                EventBus.dispatch("topicAddDelete", null);
+                EventBus.dispatch(EVENT_BUS.topicAddDelete, null);
             })
         })
         this.setState(this.initialState)

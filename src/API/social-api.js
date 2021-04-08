@@ -106,7 +106,7 @@ export default class socialClient {
 
     static async deletePosting({id}) {
         try {
-            const response = await axios.delete(baseUrl + "/posting", {data: {id}, withCredentials: true});
+            const response = await axios.delete(baseUrl + "/posting", {data: {id}});
             return response
         } catch (e) {
             console.log(e)
@@ -146,16 +146,15 @@ export default class socialClient {
         }
     }
 
-    static async updatePosting({id, title, likes, content}) {
+    static async updatePosting({id, title, content}) {
         try {
-            const response = await axios.put(baseUrl + "/posting", {id, title, likes, content}, {withCredentials: true});
+            const response = await axios.put(baseUrl + "/posting", {id, title, content})
             return response
         } catch (e) {
             console.log(e)
             if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
                 store.dispatch({type: "error/newError", payload: e.response.data})
             }
-
             return Promise.reject()
         }
     }

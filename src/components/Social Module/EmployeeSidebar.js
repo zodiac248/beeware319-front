@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import {Nav, Navbar} from "react-bootstrap";
 import {EMPLOYEE_VIEWS} from "../../constants";
 import AddPostModal from "./AddPostModal";
+import UpdatePostModal from "./UpdatePostModal";
 
 export class EmployeeSidebar extends Component {
     constructor(props) {
@@ -31,6 +32,7 @@ export class EmployeeSidebar extends Component {
                         )
                     })}
                     <AddPostModal/>
+                    <UpdatePostModal />
                 </Nav>
             </Navbar>
         )

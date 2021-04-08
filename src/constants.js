@@ -38,6 +38,12 @@ export const MAIL_STATUS = {
     closed: "Closed"
 }
 
+export const EVENT_BUS = {
+    updatePost: "updatePost",
+    buildingAddDelete: "buildingAddDelete",
+    topicAddDelete: "topicAddDelete"
+}
+
 export const requestStyles = {
     textAlign: 'left',
     margin: 'auto',

@@ -7,6 +7,8 @@ import * as BiIcons from "react-icons/io";
 import {toTitleCase} from "../../helpers";
 import {Row} from "react-bootstrap";
 import Post from "./Post";
+import EventBus from "../../EventBus";
+import {EVENT_BUS} from "../../constants";
 
 
 export class AddPostModal extends Component {
@@ -45,6 +47,7 @@ export class AddPostModal extends Component {
             payload.title = toTitleCase(payload.title)
             client.social.addPost(payload).then(res => {
                 this.setState({postId: res.data})
+                EventBus.dispatch(EVENT_BUS.updatePost, null);
             });
         }
     };
@@ -64,7 +67,7 @@ export class AddPostModal extends Component {
 
 
     setPostTitle = (e) => {
-        this.setState({postTitle: e.target.value})
+        this.setState({postTitle: e.target.value.trim()})
     }
 
     setContent = (e) => {
