@@ -102,7 +102,8 @@ export class UpdateLocationModal extends Component {
         client.booking.deleteBuilding({id: this.state.currentBuildingId})
             .then(res => {
                 NotificationManager.success("Building successfully deleted")
-                this.setState({currentBuildingId: null})
+                this.setState({currentBuildingId: null, floors: {}, desks: {}, newFloorNum: "",
+                    newFloorImage: ""})
                 this.getBuildings()
                 EventBus.dispatch("buildingAddDelete", null)
             })
@@ -143,6 +144,9 @@ export class UpdateLocationModal extends Component {
     }
 
     getFloors = () => {
+        if (!this.state.currentBuildingId) {
+            return;
+        }
         client.booking.getFloors({buildingId: this.state.currentBuildingId}).then(res => {
             let floors = res.data
             let tempFloors = {}
@@ -190,7 +194,7 @@ export class UpdateLocationModal extends Component {
                         <Form.Group>
                             <Form.Label>Select a building</Form.Label>
                             <Form.Control as="select" onChange={this.handleBuildingChange}>
-                                <option disabled selected> -- select one --</option>
+                                <option selected> -- select one --</option>
                                 {this.state.buildings.map((building) =>
                                     <option key={building.id} data-key={building.id}>
                                         {building.name} </option>

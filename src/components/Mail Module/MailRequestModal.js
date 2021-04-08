@@ -67,13 +67,13 @@ export class MailRequestModal extends Component {
         }
         if (this.props.request) {
             client.mail.updateMailRequest(payload).then(() => {
-                NotificationManager.success("Request updated successfully!")
+                NotificationManager.success("Request updated successfully!", "", 2000)
                 this.setState({show: false})
                 EventBus.dispatch("mailUpdate", null)
             })
         } else {
             client.mail.addMailRequest(payload).then(() => {
-                NotificationManager.success("Request submitted successfully!")
+                NotificationManager.success("Request submitted successfully!", "", 2000)
                 this.setState({show: false})
                 EventBus.dispatch("mailUpdate", null)
             })

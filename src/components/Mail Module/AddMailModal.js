@@ -10,6 +10,12 @@ import {Typeahead} from 'react-bootstrap-typeahead';
 export class AddMailModal extends React.Component {
 
     initialState = {show: false, email: "", buildings: [], buildingId: null, sender: "", users: []}
+
+    buttonStyle = {
+        position: "fixed",
+        top: "50%",
+        left: "5%",
+    }
     constructor(props) {
         super(props);
         this.state = JSON.parse(JSON.stringify(this.initialState))
@@ -68,7 +74,7 @@ export class AddMailModal extends React.Component {
             sender: this.state.sender
         }
         client.mail.addMail(payload).then(res => {
-            NotificationManager.success("Mail successfully added", "", 2000)
+            NotificationManager.success("Mail successfully added", "", 1500)
             EventBus.dispatch("mailUpdate", null)
         })
         this.setState({email: "", sender: ""})
@@ -111,9 +117,9 @@ export class AddMailModal extends React.Component {
 
     render() {
         return (
-            <div className="admin-modal">
+            <div>
                 <NotificationContainer />
-                <button className="btn btn-info" onClick={this.handleShow}>
+                <button style={this.buttonStyle} className="btn btn-info" onClick={this.handleShow}>
                     Add Mail
                 </button>
 

@@ -4,9 +4,8 @@ import store from "../store";
 
 export default class bookingClient {
     static async getBuildings() {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/building/all",{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.get(baseUrl + "/building/all");
             return response
         } catch (e) {
             console.log(e)
@@ -15,9 +14,8 @@ export default class bookingClient {
         }
     }
     static async getBuilding(id) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/building", {headers: {Authorization: `Bearer ${accessToken}`},params: {id}} );
+            const response = await axios.get(baseUrl + "/building", {params: {id}} );
             return response
         } catch (e) {
             console.log(e)
@@ -27,9 +25,8 @@ export default class bookingClient {
     }
 
     static async addBuilding({name, address}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.post(baseUrl + "/building", {name, address},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.post(baseUrl + "/building", {name, address});
             return response
         } catch (e) {
             if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
@@ -41,9 +38,8 @@ export default class bookingClient {
     }
 
     static async updateBuilding({id, name, address}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.put(baseUrl + "/building", {id, name, address},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.put(baseUrl + "/building", {id, name, address});
             return response
         } catch (e) {
             console.log(e)
@@ -56,9 +52,8 @@ export default class bookingClient {
     }
 
     static async deleteBuilding({id}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.delete(baseUrl + "/building", {headers: {Authorization: `Bearer ${accessToken}`},data: {id}, withCredentials: true});
+            const response = await axios.delete(baseUrl + "/building", {data: {id}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e)
@@ -69,9 +64,8 @@ export default class bookingClient {
     }
 
     static async getFloors({buildingId}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/floor", {headers: {Authorization: `Bearer ${accessToken}`},params: {buildingId}})
+            const response = await axios.get(baseUrl + "/floor", {params: {buildingId}})
             return response
         } catch (e) {
             console.log(e)
@@ -83,9 +77,8 @@ export default class bookingClient {
     }
 
     static async getFloorInfo(floorID, date) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/floor/info", {headers: {Authorization: `Bearer ${accessToken}`},params: {id: floorID, date: date}})
+            const response = await axios.get(baseUrl + "/floor/info", {params: {id: floorID, date: date}})
             return response
         } catch (e) {
             console.log(e)
@@ -97,9 +90,8 @@ export default class bookingClient {
     }
 
     static async addFloor({floorNumber, buildingId, deskNumbers, image}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.post(baseUrl + "/floor", {floorNumber, buildingId, deskNumbers, image},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.post(baseUrl + "/floor", {floorNumber, buildingId, deskNumbers, image});
             return response
         } catch (e) {
             console.log(e)
@@ -112,9 +104,8 @@ export default class bookingClient {
     }
 
     static async updateFloor({id, floorNumber, deskNumbers, image}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.put(baseUrl + "/floor", {id, floorNumber, deskNumbers, image},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.put(baseUrl + "/floor", {id, floorNumber, deskNumbers, image});
             return response
         } catch (e) {
             console.log(e)
@@ -127,9 +118,8 @@ export default class bookingClient {
     }
 
     static async deleteFloor({id}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.delete(baseUrl + "/floor", {headers: {Authorization: `Bearer ${accessToken}`},data: {id}});
+            const response = await axios.delete(baseUrl + "/floor", {data: {id}});
             return response
         } catch (e) {
             console.log(e)
@@ -142,9 +132,8 @@ export default class bookingClient {
     }
 
     static async getDesks(floorID) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/desk", {headers: {Authorization: `Bearer ${accessToken}`},params: {floorId: floorID}})
+            const response = await axios.get(baseUrl + "/desk", {params: {floorId: floorID}})
             return response
         } catch (e) {
             console.log(e)
@@ -157,9 +146,8 @@ export default class bookingClient {
     }
 
     static async updateDesks({id, floorNumber, deskNumbers}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.put(baseUrl + "/floor", {id, floorNumber, deskNumbers},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.put(baseUrl + "/floor", {id, floorNumber, deskNumbers});
             return response
         } catch (e) {
             console.log(e)
@@ -172,9 +160,8 @@ export default class bookingClient {
     }
 
     static async makeBooking({deskId, email,  date, range}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.post(baseUrl + "/booking", {deskId, email,  date, range},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.post(baseUrl + "/booking", {deskId, email,  date, range});
             return response
         } catch (e) {
             console.log(e)
@@ -186,9 +173,8 @@ export default class bookingClient {
     }
 
     static async getBookings({email}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/booking/email", {headers: {Authorization: `Bearer ${accessToken}`},params: {email}, withCredentials: true});
+            const response = await axios.get(baseUrl + "/booking/email", {params: {email}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e)
@@ -201,9 +187,8 @@ export default class bookingClient {
 
 
     static async deleteBooking({id}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.delete(baseUrl + "/booking", {headers: {Authorization: `Bearer ${accessToken}`},params: {id}, withCredentials: true});
+            const response = await axios.delete(baseUrl + "/booking", {params: {id}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e)

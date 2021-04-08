@@ -114,6 +114,7 @@ export class BookLocationForm extends Component {
 
     getDesks = () => {
         if (!this.state.startDate || !this.state.buildingId || !this.state.floorId) {
+            this.setState({availableDesks: [], desk: null})
             return;
         }
         let startDate = this.formatDate(this.state.startDate)

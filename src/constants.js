@@ -5,7 +5,7 @@ import ViewPosts from "./components/Social Module/ViewPosts";
 import ViewCategories from "./components/Social Module/ViewTopics";
 import ViewNotifications from "./components/Social Module/ViewNotifications";
 
-export const baseUrl = "https://beeware319.herokuapp.com/"
+export const baseUrl = "https://beeware319.herokuapp.com"
 
 export const roles = {
     admin: "Admin"
@@ -45,5 +45,5 @@ export const requestStyles = {
 }
 
 export const highlightedInfo = {
-    color: "rgb(18,83,194)"
+    color: "grey"
 }

@@ -4,9 +4,8 @@ import store from "../store";
 
 export default class mailClient {
     static async addMail({email, buildingId, sender, status}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.post(baseUrl + "/mail", {email, buildingId, sender, status},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.post(baseUrl + "/mail", {email, buildingId, sender, status});
             return response
         } catch (e) {
             console.log(e)
@@ -18,9 +17,8 @@ export default class mailClient {
     }
 
     static async getAllMail() {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/mail/all",  {headers: {Authorization: `Bearer ${accessToken}`}, withCredentials: true});
+            const response = await axios.get(baseUrl + "/mail/all",  {withCredentials: true});
             return response
         } catch (e) {
             console.log(e)
@@ -32,9 +30,8 @@ export default class mailClient {
     }
 
     static async getMailByEmail({email}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/mail/byEmail",  {headers: {Authorization: `Bearer ${accessToken}`},params: {email}});
+            const response = await axios.get(baseUrl + "/mail/byEmail",  {params: {email}});
             return response
         } catch (e) {
             console.log(e)
@@ -46,9 +43,8 @@ export default class mailClient {
     }
 
     static async getMailByStatus({status}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.get(baseUrl + "/mail/byStatus",  {headers: {Authorization: `Bearer ${accessToken}`},params: {status}, withCredentials: true});
+            const response = await axios.get(baseUrl + "/mail/byStatus",  {params: {status}, withCredentials: true});
             return response
         } catch (e) {
             console.log(e)
@@ -60,9 +56,8 @@ export default class mailClient {
     }
 
     static async addMailRequest({id, instructionType, instructionDescription, requestedCompletionDate}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.put(baseUrl + "/request/submit", {id, instructionType, instructionDescription, requestedCompletionDate},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.put(baseUrl + "/request/submit", {id, instructionType, instructionDescription, requestedCompletionDate});
             return response
         } catch (e) {
             console.log(e)
@@ -74,9 +69,34 @@ export default class mailClient {
     }
 
     static async updateMailRequest({id, instructionType, instructionDescription, requestedCompletionDate}) {
-        let accessToken =  store.getState().auth.accessToken
         try {
-            const response = await axios.put(baseUrl + "/request", {id, instructionType, instructionDescription, requestedCompletionDate},{headers: {Authorization: `Bearer ${accessToken}`}});
+            const response = await axios.put(baseUrl + "/request", {id, instructionType, instructionDescription, requestedCompletionDate});
+            return response
+        } catch (e) {
+            console.log(e)
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
+            return Promise.reject()
+        }
+    }
+
+    static async updateMail({id, email, sender, status, buildingId}) {
+        try {
+            const response = await axios.put(baseUrl + "/mail", {id, email, sender, status, buildingId});
+            return response
+        } catch (e) {
+            console.log(e)
+            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
+            return Promise.reject()
+        }
+    }
+
+    static async updateAdminMail({id, status, feedback}) {
+        try {
+            const response = await axios.put(baseUrl + "/request", {id, status, feedback});
             return response
         } catch (e) {
             console.log(e)

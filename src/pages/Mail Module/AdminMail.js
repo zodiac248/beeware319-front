@@ -5,6 +5,7 @@ import 'react-notifications/lib/notifications.css';
 import {NotificationContainer} from "react-notifications";
 import ViewRequests from "../../components/Mail Module/ViewRequests";
 import AddMailModal from "../../components/Mail Module/AddMailModal";
+import AdminFeedbackModal from "../../components/Mail Module/AdminFeedbackModal";
 
 export class ManageRequests extends Component {
     render() {
@@ -12,8 +13,8 @@ export class ManageRequests extends Component {
             <div>
                 <NavigationBar />
                 <NotificationContainer/>
-                <AddMailModal />
                 <ViewRequests adminView={true}/>
+                <AddMailModal />
             </div>
         );
     }
