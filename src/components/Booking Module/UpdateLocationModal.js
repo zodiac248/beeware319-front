@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Button, Modal, Form, Col, Accordion, Card, Image} from "react-bootstrap";
 import client from "../../API/api";
 import {Row} from "react-bootstrap";
-import {NotificationManager, NotificationContainer} from "react-notifications";
+import {NotificationManager} from "react-notifications";
 import EventBus from "../../EventBus";
 
 export class UpdateLocationModal extends Component {
@@ -184,7 +184,6 @@ export class UpdateLocationModal extends Component {
     render() {
         return (
             <div className="admin-modal">
-                <NotificationContainer/>
                 <button className="btn btn-info" onClick={this.handleOpen}> Update Locations</button>
                 <Modal show={this.state.show} onHide={this.handleClose} size="lg" scrollable={true}>
                     <Modal.Header closeButton>

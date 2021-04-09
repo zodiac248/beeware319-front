@@ -279,4 +279,45 @@ export default class socialClient {
             return Promise.reject()
         }
     }
+
+    static async getCommentsByPost({postingId}) {
+        try {
+            const response = await axios.get(baseUrl + "/comment",
+                {params: {postingId}, withCredentials: true})
+            return response
+        } catch (e) {
+            console.log(e)
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
+            return Promise.reject()
+        }
+    }
+
+    static async addComment({email, postingId, content}) {
+        try {
+            const response = await axios.post(baseUrl + "/comment",{email, postingId, content}, {withCredentials: true});
+            return response
+        } catch (e) {
+            console.log(e)
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
+
+            return Promise.reject()
+        }
+    }
+
+    static async deleteComment({id}) {
+        try {
+            const response = await axios.delete(baseUrl + "/comment", {data: {id}});
+            return response
+        } catch (e) {
+            console.log(e)
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
+            return Promise.reject()
+        }
+    }
 }

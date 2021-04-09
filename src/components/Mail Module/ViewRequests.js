@@ -1,13 +1,12 @@
 import React, {Component} from "react";
-import {Card, Col, Container, Form, Nav, Row} from "react-bootstrap"
+import {Button, Card, Col, Container, Form, Nav, Row} from "react-bootstrap"
 import {connect} from "react-redux";
 import client from "../../API/api";
 import {MAIL_STATUS, requestStyles, highlightedInfo} from "../../constants";
-import {capitalizeFirst, toTitleCase} from "../../helpers";
+import {toTitleCase} from "../../helpers";
 import {MailRequestModal} from "./MailRequestModal";
 import EventBus from "../../EventBus";
 import AdminFeedbackModal from "./AdminFeedbackModal";
-import {NotificationManager} from "react-notifications";
 
 export class ViewRequests extends Component {
     REQUEST_TABS = {
@@ -20,6 +19,12 @@ export class ViewRequests extends Component {
 
     initialState = {
         currTab: this.REQUEST_TABS.all.title, mails: [], buildingId: null, buildings: []
+    }
+
+    goTopButtonStyle = {
+        position: "fixed",
+        bottom: "5%",
+        right: "5%",
     }
 
     constructor(props) {
@@ -114,6 +119,10 @@ export class ViewRequests extends Component {
         this.getAllRequests(title)
     }
 
+    handleGoTop() {
+        window.scrollTo(0,0)
+    }
+
     renderRequest = (mail) => {
         return (
             <Card style={requestStyles} className="mt-4">
@@ -152,7 +161,7 @@ export class ViewRequests extends Component {
                         Instruction - <span style={highlightedInfo}>{mail.request.instructionType}</span>
                         <br/>
                         <span style={highlightedInfo}>
-                            {capitalizeFirst(mail.request.instructionDescription)}
+                            {mail.request.instructionDescription}
                         </span>
                     </Card.Text>
                     <Card.Text>
@@ -160,9 +169,9 @@ export class ViewRequests extends Component {
                         <br/>
                         <span
                             style={highlightedInfo}> {(mail.request.feedback === null
-                                || mail.request.feedback === "")
-                                ? "None"
-                                : capitalizeFirst(mail.request.feedback)}
+                            || mail.request.feedback === "")
+                            ? "None"
+                            : mail.request.feedback}
                         </span>
                     </Card.Text>
                 </Card.Body>
@@ -206,23 +215,26 @@ export class ViewRequests extends Component {
             <div>
                 <h2> Mail + Requests</h2>
                 <Container fluid>
-                <Nav variant="tabs" defaultActiveKey="#all">
-                    {Object.values(this.REQUEST_TABS).map(tab => {
-                        return (
-                            <Nav.Item>
-                                <Nav.Link
-                                    style={{color: "gray"}}
-                                    href={tab.link}
-                                    onSelect={() => {
-                                        this.handleSelect(tab.title)
-                                    }}>
-                                    {tab.title}
-                                </Nav.Link>
-                            </Nav.Item>
-                        )
-                    })}
-                </Nav>
-                <br/>
+                    <Button style={this.goTopButtonStyle} variant={"outline-secondary"} onClick={this.handleGoTop}>
+                        Go To Top
+                    </Button>
+                    <Nav variant="tabs" defaultActiveKey="#all">
+                        {Object.values(this.REQUEST_TABS).map(tab => {
+                            return (
+                                <Nav.Item>
+                                    <Nav.Link
+                                        style={{color: "gray"}}
+                                        href={tab.link}
+                                        onSelect={() => {
+                                            this.handleSelect(tab.title)
+                                        }}>
+                                        {tab.title}
+                                    </Nav.Link>
+                                </Nav.Item>
+                            )
+                        })}
+                    </Nav>
+                    <br/>
                     <Form.Control as="select" onChange={this.handleBuildingChange}>
                         <option selected> Filter by building</option>
                         {this.state.buildings.map((building) =>
@@ -233,18 +245,18 @@ export class ViewRequests extends Component {
 
                     <div>
                         <br/>
-                    {Object.keys(this.state.mails).length === 0 ? "No mail to display" : ""}
-                    {Object.keys(this.state.mails).map(key => {
-                        const mail = this.state.mails[key]
-                        if (!this.state.buildingId || mail.building.id == this.state.buildingId) {
-                            if (mail.status !== MAIL_STATUS.awaitingRequest) {
-                                return this.renderRequest(mail)
-                            } else {
-                                return this.renderMail(mail)
+                        {Object.keys(this.state.mails).length === 0 ? "No mail to display" : ""}
+                        {Object.keys(this.state.mails).map(key => {
+                            const mail = this.state.mails[key]
+                            if (!this.state.buildingId || mail.building.id == this.state.buildingId) {
+                                if (mail.status !== MAIL_STATUS.awaitingRequest) {
+                                    return this.renderRequest(mail)
+                                } else {
+                                    return this.renderMail(mail)
+                                }
                             }
-                        }
-                    })}
-                </div>
+                        })}
+                    </div>
                 </Container>
             </div>
         )

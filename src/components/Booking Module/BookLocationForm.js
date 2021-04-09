@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Form, Button, Row, Col, Container, Figure, Modal, ModalFooter, FormGroup, Image} from "react-bootstrap";
 import moment from 'moment'
 import {dateFormat} from "../../constants";
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import 'react-dates/initialize';
 import {DateRangePicker} from 'react-dates';
@@ -153,7 +153,6 @@ export class BookLocationForm extends Component {
 
         return (
             <div>
-                <NotificationContainer/>
                 <Container style={{marginTop: '5%'}} as={Row} fluid>
                     <Container as={Col} fluid>
                         <h2>Book Your Location</h2>

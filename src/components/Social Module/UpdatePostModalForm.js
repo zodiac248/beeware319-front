@@ -14,7 +14,7 @@ export class UpdatePostModalForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            show: false, topicID: 0, title: "", content: ""}
+            show: false, title: "", content: ""}
     }
 
     handleSubmit = (event) => {

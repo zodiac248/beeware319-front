@@ -2,10 +2,12 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Button, Col, Form, Modal, Row} from 'react-bootstrap';
 import 'react-notifications/lib/notifications.css';
-import {NotificationManager, NotificationContainer} from "react-notifications";
+import {NotificationManager} from "react-notifications";
 import client from "../../API/api";
 import equal from "fast-deep-equal/es6";
 import EventBus from "../../EventBus";
+import {dateFormat, NOTIFICATION_TIMER} from "../../constants";
+import moment from "moment";
 
 export class MailRequestModal extends Component {
     INSTRUCTION_TYPES = {
@@ -19,7 +21,8 @@ export class MailRequestModal extends Component {
         textAlign: 'left'
     }
 
-    initialState = {show: false, instructionType: this.INSTRUCTION_TYPES.hold, instructionDescription: "", requestedCompletionDate: null}
+    initialState = {show: false, instructionType: this.INSTRUCTION_TYPES.hold, instructionDescription: null,
+        requestedCompletionDate: null}
 
     constructor(props) {
         super(props);
@@ -51,29 +54,40 @@ export class MailRequestModal extends Component {
     }
 
     handleClose = () => {
-        this.setState({show: false})
+        this.setState({show: false, instructionType: this.props.request.instructionType,
+            instructionDescription:this.props.request.instructionDescription,
+            requestedCompletionDate: this.props.request.requestedCompletionDate.substr(0, 10)})
     }
 
     handleSubmit = () => {
+        let instructionType = this.state.instructionType
+        let instructionDescription = this.state.instructionDescription.trim()
+        let requestedCompletionDate = this.state.requestedCompletionDate
         if (!this.state.requestedCompletionDate) {
-            NotificationManager.error("Please select a date", "", 2000)
-            return;
+            NotificationManager.error("Please select a date", "", NOTIFICATION_TIMER)
+            return
         }
         let payload = {
             id: this.props.mail.request.id,
-            instructionType: this.state.instructionType,
-            instructionDescription: this.state.instructionDescription,
-            requestedCompletionDate: this.state.requestedCompletionDate
+            instructionType: instructionType,
+            instructionDescription: instructionDescription,
+            requestedCompletionDate: requestedCompletionDate
         }
         if (this.props.request) {
-            client.mail.updateMailRequest(payload).then(() => {
-                NotificationManager.success("Request updated successfully!", "", 2000)
-                this.setState({show: false})
-                EventBus.dispatch("mailUpdate", null)
-            })
+            if (instructionType !== this.props.request.instructionType ||
+                instructionDescription !== this.props.request.instructionDescription ||
+                requestedCompletionDate !== this.props.request.requestedCompletionDate.substr(0, 10)) {
+                client.mail.updateMailRequest(payload).then(() => {
+                    NotificationManager.success("Request updated successfully!", "", NOTIFICATION_TIMER)
+                    this.setState({show: false})
+                    EventBus.dispatch("mailUpdate", null)
+                })
+            } else {
+                NotificationManager.error("No updates made", "", NOTIFICATION_TIMER)
+            }
         } else {
             client.mail.addMailRequest(payload).then(() => {
-                NotificationManager.success("Request submitted successfully!", "", 2000)
+                NotificationManager.success("Request submitted successfully!", "", NOTIFICATION_TIMER)
                 this.setState({show: false})
                 EventBus.dispatch("mailUpdate", null)
             })
@@ -86,6 +100,7 @@ export class MailRequestModal extends Component {
         this.setState({instructionType: this.INSTRUCTION_TYPES[key]})
     }
 
+
     setInstructionDescription = (e) => {
         this.setState({instructionDescription: e.target.value})
     }
@@ -95,9 +110,10 @@ export class MailRequestModal extends Component {
     }
 
     render() {
+        let minDate = moment(new Date())
+        let formattedDate = moment(minDate._d).format(dateFormat)
         return (
             <div>
-                <NotificationContainer />
                 <Button variant={"outline-secondary"} onClick={this.handleShow}>Add/Edit Request</Button>
                 <Modal
                     show={this.state.show}
@@ -141,7 +157,10 @@ export class MailRequestModal extends Component {
                             <Form.Group as={Row} controlId="formDate">
                                 <Form.Label column sm={3}>Requested Completion Date</Form.Label>
                                 <Col sm={9}>
-                                    <Form.Control onChange={this.setDate} type="date" value={this.state.requestedCompletionDate}></Form.Control>
+                                    <Form.Control onChange={this.setDate}
+                                                  type="date"
+                                                  min={formattedDate}
+                                                  value={this.state.requestedCompletionDate}/>
                                 </Col>
                             </Form.Group>
                         </Form>

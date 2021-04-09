@@ -53,3 +53,5 @@ export const requestStyles = {
 export const highlightedInfo = {
     color: "grey"
 }
+
+export const NOTIFICATION_TIMER = 2000

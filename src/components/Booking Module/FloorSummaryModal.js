@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Button, Modal, Form, Table} from "react-bootstrap";
 import client from "../../API/api";
 import EventBus from "../../EventBus";
-import {NotificationManager, NotificationContainer} from "react-notifications";
+import {NotificationManager} from "react-notifications";
 
 export class FloorSummaryModal extends Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export class FloorSummaryModal extends Component {
     }
 
     handleDateChange = (e) => {
-        this.setState({date: e.target.value})
+        this.setState({date: e.target.value}, this.getFloors)
     }
 
     handleBuildingChange = (e) => {
@@ -34,7 +34,7 @@ export class FloorSummaryModal extends Component {
     }
 
     getFloors = () => {
-        if (!this.state.currentBuildingId) {
+        if (!this.state.currentBuildingId || !this.state.date) {
             this.setState({floors: []})
             return;
         }
@@ -71,7 +71,6 @@ export class FloorSummaryModal extends Component {
         // this is just a sample, using bootstrap react, change as needed
         return (
             <div className="admin-modal">
-                <NotificationContainer />
                 <button className="btn btn-info" onClick={this.handleOpen}> View Bookings Summary</button>
                 <Modal show={this.state.show} onHide={this.handleClose} size="lg">
                     <Modal.Header closeButton>

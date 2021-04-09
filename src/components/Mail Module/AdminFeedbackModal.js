@@ -1,12 +1,12 @@
 import React from "react";
-import {Button, Form, Container, ModalBody, Modal, Col, Row} from "react-bootstrap";
+import {Button, Form, Container, ModalBody, Modal, Col, Row, ModalFooter} from "react-bootstrap";
 import {connect} from "react-redux";
 import client from "../../API/api";
 import 'react-notifications/lib/notifications.css';
-import {NotificationManager, NotificationContainer} from "react-notifications";
+import {NotificationManager} from "react-notifications";
 import EventBus from "../../EventBus";
 import equal from "fast-deep-equal/es6";
-import {MAIL_STATUS} from "../../constants";
+import {MAIL_STATUS, NOTIFICATION_TIMER} from "../../constants";
 
 
 export class AdminFeedbackModal extends React.Component {
@@ -37,17 +37,21 @@ export class AdminFeedbackModal extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault()
+        let feedback = this.state.feedback.trim()
         let payload = {
             id: this.props.request.id,
             status: this.state.status,
-            feedback: this.state.feedback
+            feedback: feedback
         }
-        if (this.state.status !== this.props.mail.status || this.state.feedback !== this.props.request.feedback) {
+        if (this.state.status !== this.props.mail.status || feedback !== this.props.request.feedback) {
             client.mail.updateAdminMail(payload).then(() => {
-                NotificationManager.success("Request updated successfully!", "", 2000)
                 EventBus.dispatch("mailUpdate", null)
+                NotificationManager.success("Request updated successfully!", "", NOTIFICATION_TIMER)
                 this.setState({show: false})
             })
+        } else {
+            this.setState({show: false})
+            NotificationManager.success("No changes to save", "", NOTIFICATION_TIMER)
         }
     }
 
@@ -56,7 +60,7 @@ export class AdminFeedbackModal extends React.Component {
     }
 
     handleClose = () => {
-        this.setState({show: false})
+        this.setState({show: false, status: this.props.mail.status, feedback: this.props.request.feedback})
     }
 
     setStatus = (e) => {
@@ -72,7 +76,6 @@ export class AdminFeedbackModal extends React.Component {
     render() {
         return (
             <div>
-                <NotificationContainer />
                 <Button variant={'outline-secondary'} onClick={this.handleShow}>Manage Request
                 </Button>
 
@@ -81,7 +84,7 @@ export class AdminFeedbackModal extends React.Component {
                         <Modal.Title>Manage Current Mail Request</Modal.Title>
                     </Modal.Header>
                     <ModalBody>
-                        <Form onSubmit={this.handleSubmit}>
+                        <Form>
                             <Container fluid>
                                 <Form.Group as={Row}>
                                     <Form.Label column sm={3}>Sender</Form.Label>
@@ -118,10 +121,13 @@ export class AdminFeedbackModal extends React.Component {
                                                       placeholder="Provide feedback here"/>
                                     </span>
                                 </Form.Group>
-                                <Button variant="primary" type="submit">Update</Button>
                             </Container>
                         </Form>
                     </ModalBody>
+                    <ModalFooter>
+                        <Button variant="secondary" onClick={this.handleClose}>Cancel</Button>
+                        <Button variant="primary"  onClick={this.handleSubmit}>Update</Button>
+                    </ModalFooter>
                 </Modal>
             </div>);
     }

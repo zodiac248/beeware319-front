@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Form, Container, ModalBody, Modal, Col, Row} from "react-bootstrap";
 import {connect} from "react-redux";
 import client from "../../API/api";
-import {NotificationManager, NotificationContainer} from "react-notifications";
+import {NotificationManager} from "react-notifications";
 import EventBus from "../../EventBus";
 
 
@@ -51,7 +51,6 @@ export class AddLocationModal extends React.Component {
     render() {
         return (
             <div className="admin-modal">
-                <NotificationContainer />
                 <button className="btn btn-info" onClick={this.handleShow}>
                     Add Location
                 </button>

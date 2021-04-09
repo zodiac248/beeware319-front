@@ -3,6 +3,8 @@ import {connect} from "react-redux";
 import {Card, Button} from "react-bootstrap";
 import client from "../../API/api";
 import {toTitleCase} from "../../helpers";
+import ViewCommentsModal from "./ViewCommentsModal";
+import {Link} from "react-router-dom";
 
 export class Post extends Component {
     constructor(props) {
@@ -55,15 +57,19 @@ export class Post extends Component {
                     {/*TODO: replace with actual image*/}
                     {/*<Card.Img variant="bottom"*/}
                     {/*          src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"/>*/}
-                {
-                    this.props.isAdmin
-                    ? <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={this.handleDelete}
-                    >Delete</Button>
-                    : ""
-                }
+                    <ViewCommentsModal post={this.state.post}/>
+                    <br/>
+                    {
+                        (this.props.isAdmin || this.props.post.email === this.props.email)
+                        && <Link
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={this.handleDelete}
+                            style={{color: "crimson"}}
+                        >
+                            Delete Post
+                        </Link>
+                    }
                 </Card.Body>
             </Card>
         )

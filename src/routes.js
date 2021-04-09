@@ -11,10 +11,12 @@ import "./App.css"
 import {AdminSocial} from "./pages/Social Module/AdminSocial";
 import ManageRequests from "./pages/Mail Module/Mail";
 import AdminMail from "./pages/Mail Module/AdminMail";
+import {NotificationContainer} from "react-notifications";
 
 export const Routes = (props) => {
     return (
         <div>
+            <NotificationContainer/>
             <Switch>
                 <Route exact path="/">
                     < App/>

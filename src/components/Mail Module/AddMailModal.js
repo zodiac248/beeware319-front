@@ -2,9 +2,11 @@ import React from "react";
 import {Button, Form, Container, ModalBody, Modal, Col, Row} from "react-bootstrap";
 import {connect} from "react-redux";
 import client from "../../API/api";
-import {NotificationManager, NotificationContainer} from "react-notifications";
+import 'react-notifications/lib/notifications.css';
+import {NotificationManager} from "react-notifications";
 import EventBus from "../../EventBus";
 import {Typeahead} from 'react-bootstrap-typeahead';
+import {NOTIFICATION_TIMER} from "../../constants";
 
 
 export class AddMailModal extends React.Component {
@@ -16,6 +18,7 @@ export class AddMailModal extends React.Component {
         top: "50%",
         left: "5%",
     }
+
     constructor(props) {
         super(props);
         this.state = JSON.parse(JSON.stringify(this.initialState))
@@ -59,25 +62,26 @@ export class AddMailModal extends React.Component {
     }
 
     handleSubmit = (event) => {
-        event.preventDefault();
+        event.preventDefault()
+        let sender = this.state.sender.trim()
         if (!this.validateEmail()) {
-            NotificationManager.error("Please enter a valid email", "", 2000)
-            return;
+            NotificationManager.error("Please enter a valid email", "", NOTIFICATION_TIMER)
+            return
         }
-        if (this.state.sender === "" || !this.state.buildingId) {
-            NotificationManager.error("Please fill in all fields", "", 2000)
-            return;
+        if (sender === "" || !this.state.buildingId) {
+            NotificationManager.error("Please fill in all fields", "", NOTIFICATION_TIMER)
+            return
         }
         const payload = {
             email: this.state.email,
             buildingId: this.state.buildingId,
-            sender: this.state.sender
+            sender: sender
         }
         client.mail.addMail(payload).then(res => {
-            NotificationManager.success("Mail successfully added", "", 1500)
+            NotificationManager.success("Mail successfully added", "", NOTIFICATION_TIMER)
             EventBus.dispatch("mailUpdate", null)
         })
-        this.setState({email: "", sender: ""})
+        this.setState({sender: ""})
     };
 
     handleShow = (e) => {
@@ -85,8 +89,7 @@ export class AddMailModal extends React.Component {
     }
 
     handleClose = (e) => {
-        this.setState({show: false})
-        this.setState({email: "", buildingId: null, sender: ""})
+        this.setState({show: false, email: "", buildingId: null, sender: ""})
     }
 
     validateEmail = () => {
@@ -105,8 +108,7 @@ export class AddMailModal extends React.Component {
     }
 
     setSender = (e) => {
-        let sender = e.target.value
-        this.setState({sender: sender})
+        this.setState({sender: e.target.value})
     }
 
     setBuilding = (e) => {
@@ -118,14 +120,13 @@ export class AddMailModal extends React.Component {
     render() {
         return (
             <div>
-                <NotificationContainer />
                 <button style={this.buttonStyle} className="btn btn-info" onClick={this.handleShow}>
                     Add Mail
                 </button>
 
                 <Modal show={this.state.show} onHide={this.handleClose} size={"lg"}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Add Location</Modal.Title>
+                        <Modal.Title>Add Mail</Modal.Title>
                     </Modal.Header>
                     <ModalBody>
                         <Form onSubmit={this.handleSubmit}>
