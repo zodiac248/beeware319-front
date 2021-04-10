@@ -5,7 +5,7 @@ import {Row} from "react-bootstrap";
 import {NotificationManager} from "react-notifications";
 import EventBus from "../../EventBus";
 
-export class UpdateLocationModal extends Component {
+export class UpdateFloorsModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,13 +16,21 @@ export class UpdateLocationModal extends Component {
             desks: {},
             currentBuildingId: null,
             newFloorNum: "",
-            newFloorImage: ""
+            newFloorImage: "",
+            sanitizedDesks: "",
+            violatedDesks: null,
+            duplicatedDesks: null,
+            currentFloorID: null,
+            confirmationShow: false
         }
     }
 
     handleClose = () => {
-        this.setState({show: false, currentBuildingId: null, floors: {}, desks: {}, newFloorNum: "",
-            newFloorImage: ""})
+        this.setState({
+            show: false, currentBuildingId: null, floors: {}, desks: {}, newFloorNum: "", newFloorImage: "",
+            sanitizedDesks: "", violatedDesks: null, duplicatedDesks: null, currentFloorID: null,
+            confirmationShow: false
+        })
     }
 
     handleOpen = () => {
@@ -38,6 +46,7 @@ export class UpdateLocationModal extends Component {
         let reader = new FileReader()
         reader.onload = (ev) => {
             this.setState({newFloorImage: ev.target.result.split(',')[1]})
+            e.target.value=""
         }
         reader.readAsDataURL(file)
         NotificationManager.success("Image successfully uploaded")
@@ -58,8 +67,6 @@ export class UpdateLocationModal extends Component {
                 image: floorImage
             }).then(() => {
                 NotificationManager.success("New floor added")
-                document.getElementById('floorimageinput').value = null
-            }).then(() => {
                 this.setState({newFloorNum: "", newFloorImage: ""})
                 this.getFloors()
             })
@@ -69,22 +76,30 @@ export class UpdateLocationModal extends Component {
     updateDesks = (e, floorId) => {
         let floors = this.state.floors
         let floor = this.state.floors[floorId]
-        floor.desks = e.target.value.trim()
+        floor.desks = e.target.value
         floors[floorId] = floor
         this.setState({floors: floors})
     }
 
     updateFloor = (e, floorId) => {
         e.preventDefault()
-        const floor = this.state.floors[floorId]
+        let floors = this.state.floors
+        let floor = this.state.floors[floorId]
         client.booking.updateFloor({
             id: floorId,
             floorNumber: floor.floorNumber,
-            deskNumbers: floor.desks,
+            deskNumbers: this.state.sanitizedDesks,
             image: floor.image
         }).then(res => {
-                NotificationManager.success("Saved", "", 2000)
-            })
+            NotificationManager.success("Saved", "", 2000)
+            floor.desks = this.state.sanitizedDesks
+            floors[floorId] = floor
+            this.setState({confirmationShow: false, floors: floors, sanitizedDesks: "", violatedDesks: null,
+                duplicatedDesks: null, currentFloorID: null})
+        }).catch(res => {
+            this.setState({confirmationShow: false, sanitizedDesks: "", violatedDesks: null,
+                duplicatedDesks: null, currentFloorID: null})
+        })
     }
 
     deleteFloor = (e, floorId) => {
@@ -170,6 +185,41 @@ export class UpdateLocationModal extends Component {
         })
     }
 
+	handleConfirmationOpen = (floorId) => {
+		this.setState({confirmationShow: true, currentFloorID: floorId})	
+		let desks = this.state.floors[floorId].desks
+		let deskList = desks.split(',')
+		let sanitizedDeskSet = new Set()
+        let violatedDesks = []
+        let duplicatedDesks = []
+		let re = /^(\d|[A-Z]|[a-z])+$/
+		deskList.forEach(desk => {
+			desk = desk.trim()
+            if (desk.length === 0) {
+                return
+            }
+			if (re.test(desk)){
+                if (sanitizedDeskSet.has(desk)){
+                    duplicatedDesks.push(desk)
+                } else {
+				    sanitizedDeskSet.add(desk)
+                }
+            } else {
+                violatedDesks.push(desk)
+            }
+		})
+		let sanitizedDeskString = Array.from(sanitizedDeskSet).join(",")
+		this.setState({
+            sanitizedDesks: sanitizedDeskString, 
+            violatedDesks: violatedDesks,
+            duplicatedDesks: duplicatedDesks
+        })
+	}
+
+	handleConfirmationClose = () => {
+		this.setState({confirmationShow: false})	
+	}
+
     componentDidMount() {
         this.getBuildings();
         EventBus.on("buildingAddDelete", (data) => {
@@ -184,10 +234,10 @@ export class UpdateLocationModal extends Component {
     render() {
         return (
             <div className="admin-modal">
-                <button className="btn btn-info" onClick={this.handleOpen}> Update Locations</button>
+                <button className="btn btn-info" onClick={this.handleOpen}> Manage Floors</button>
                 <Modal show={this.state.show} onHide={this.handleClose} size="lg" scrollable={true}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Modal heading</Modal.Title>
+                        <Modal.Title>Manage Floors</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form.Group>
@@ -209,7 +259,6 @@ export class UpdateLocationModal extends Component {
                                 <Col sm="4">
                                     <Form.File
                                         style={{textAlign: "left"}}
-                                        id="floorimageinput"
                                         label="Layout image"
                                         accept="image/png,image/jpg,image/jpeg"
                                         onChange={this.handleNewFloorImageChange}
@@ -264,17 +313,22 @@ export class UpdateLocationModal extends Component {
                                                                   onChange={(e) => {
                                                                       this.updateDesks(e, floorId)
                                                                   }} rows={5} key={floorId}
-                                                                  defaultValue={floor.desks}/>
+                                                                  defaultValue={floor.desks}
+                                                                  value={floor.desks}/>
                                                     <Form.Text className="text-muted">
                                                         Please enter as a comma separated list (ex. 100, 200, etc.)
                                                     </Form.Text>
+                                                    <Form.Text className="text-muted">
+                                                        Desk numbers can consist of digits or letters only (ex. 011, 011B, 1a2b etc.)
+                                                    </Form.Text>
                                                 </Form.Group>
 
-                                                <Button style={{marginRight: '10px'}} onClick={(e) => {
-                                                    this.updateFloor(e, floorId)
+                                                <Button style={{marginRight: '10px'}} onClick={() => {
+                                                    this.handleConfirmationOpen(floorId)
                                                 }} type="submit" className="mb-2">
                                                     Save
-                                                </Button>
+                                                </Button>   
+
                                                 <Button variant={"danger"} onClick={(e) => {
                                                     this.deleteFloor(e, floorId)
                                                 }} type="submit" className="mb-2">
@@ -298,6 +352,45 @@ export class UpdateLocationModal extends Component {
 
                         <Button variant="secondary" onClick={this.handleClose}>
                             Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.state.confirmationShow} onHide={this.handleConfirmationClose} className="confirmation">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmation Notice</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div style={{
+                            wordWrap: "break-word",
+                            whiteSpace: "pre-line"
+                        }}>
+                            {this.state.duplicatedDesks !== null && this.state.duplicatedDesks.length !== 0 &&  
+                                <p>
+                                   {this.state.duplicatedDesks.length} desk(s) will not be added due to duplication :
+                                    {this.state.duplicatedDesks.join(", ")} {"\n"}
+                                </p>
+                            }
+                            {this.state.violatedDesks !== null && this.state.violatedDesks.length !== 0 && 
+                                <p>
+                                    {this.state.violatedDesks.length} desk(s) will not be added due to constraint violation :
+                                    {this.state.violatedDesks.join(", ")} {"\n"}
+                                </p>
+                            }
+                            {(this.state.violatedDesks === null || this.state.violatedDesks.length === 0) &&
+                               (this.state.duplicatedDesks === null || this.state.duplicatedDesks.length === 0) &&
+                                <p>
+                                    Would you like to proceed?
+                                </p>
+                            }
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer> 
+                        <Button variant="secondary" onClick={this.handleConfirmationClose}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" onClick={(e) => {this.updateFloor(e, this.state.currentFloorID)}}>
+                            Proceed	
                         </Button>
                     </Modal.Footer>
                 </Modal>

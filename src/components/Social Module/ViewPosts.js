@@ -3,6 +3,8 @@ import {connect} from "react-redux";
 import {Container} from "react-bootstrap";
 import client from "../../API/api";
 import Post from "./Post";
+import {EVENT_BUS} from "../../constants";
+import EventBus from "../../EventBus";
 
 export class ViewPosts extends Component {
     constructor(props) {
@@ -15,10 +17,21 @@ export class ViewPosts extends Component {
     }
 
     componentDidMount() {
+        this.getPosts()
+        EventBus.on(EVENT_BUS.postUpdate, (data) => {
+            this.getPosts()
+        })
+    }
+
+    componentWillUnmount() {
+        EventBus.remove(EVENT_BUS.postUpdate)
+    }
+
+    getPosts = () => {
         if (this.props.topic) {
             let temp = []
             temp.push(this.props.topic)
-            this.setState({topics: temp}, this.getPosts)
+            this.setState({topics: temp}, this.getPostsByTopic)
         } else {
             client.social.getPostingBySubscriptions({email: this.props.email}).then(res => {
                 this.setState({posts: res.data})
@@ -26,7 +39,7 @@ export class ViewPosts extends Component {
         }
     }
 
-    getPosts = () => {
+    getPostsByTopic = () => {
         let temp = []
         this.state.topics.forEach(topic => {
             client.social.getPostByTopic({topicId: topic.id}).then(res => {

@@ -218,7 +218,7 @@ export class ViewRequests extends Component {
                     <Button style={this.goTopButtonStyle} variant={"outline-secondary"} onClick={this.handleGoTop}>
                         Go To Top
                     </Button>
-                    <Nav variant="tabs" defaultActiveKey="#all">
+                    <Nav variant="tabs" defaultActiveKey={this.REQUEST_TABS.all.link}>
                         {Object.values(this.REQUEST_TABS).map(tab => {
                             return (
                                 <Nav.Item>

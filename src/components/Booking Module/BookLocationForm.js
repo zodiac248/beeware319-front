@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Form, Button, Row, Col, Container, Figure, Modal, ModalFooter, FormGroup, Image} from "react-bootstrap";
+import {Form, Button, Row, Col, Container, FormGroup, Image} from "react-bootstrap";
 import moment from 'moment'
 import {dateFormat} from "../../constants";
 import {NotificationManager} from 'react-notifications';
@@ -62,13 +62,19 @@ export class BookLocationForm extends Component {
             date: this.formatDate(this.state.startDate),
             range: 1
         }
+        let promises = []
         for (let i = 0; i < range; i++) {
             payload.date = moment(this.state.startDate).add(i, 'days').format(dateFormat)
-            client.booking.makeBooking(payload).then(res => {
-                NotificationManager.success("Booking successful", "", 2000)
-                this.setState(JSON.parse((JSON.stringify(this.initialState))), this.getBuildings)
-            })
+            console.log(payload)
+            promises.push(client.booking.makeBooking(payload))
         }
+        Promise.all(promises).then(res => {
+            NotificationManager.success("All bookings made successfully", "", 2000)
+            this.setState(JSON.parse((JSON.stringify(this.initialState))), this.getBuildings)
+        }).catch(() => {
+            NotificationManager.warning("Some bookings could not be made", "", 2000)
+            this.setState(JSON.parse((JSON.stringify(this.initialState))), this.getBuildings)
+        })
     }
 
     setDates = ({startDate, endDate}) => {
@@ -126,6 +132,7 @@ export class BookLocationForm extends Component {
                     temp.push(desk)
                 }
             })
+            this.setState({availableDesks: []})
             this.setState({availableDesks: temp, desk: null})
         })
     }

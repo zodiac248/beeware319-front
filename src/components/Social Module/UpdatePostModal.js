@@ -22,7 +22,7 @@ export class UpdatePostModal extends Component {
     componentDidMount() {
         this.getTopics()
         this.getPostings()
-        EventBus.on(EVENT_BUS.updatePost, (data) => {
+        EventBus.on(EVENT_BUS.postUpdate, (data) => {
             this.getPostings()
         })
         EventBus.on(EVENT_BUS.topicAddDelete, (data) => {
@@ -32,7 +32,7 @@ export class UpdatePostModal extends Component {
     }
 
     componentWillUnmount() {
-        EventBus.remove(EVENT_BUS.updatePost)
+        EventBus.remove(EVENT_BUS.postUpdate)
         EventBus.remove(EVENT_BUS.topicAddDelete)
     }
 

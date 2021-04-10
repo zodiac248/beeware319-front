@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Button, Form, Table, Col, Row} from "react-bootstrap";
 import {connect} from "react-redux";
 import client from "../../API/api";
+import moment from 'moment'
 
 export class ManageBookingsForm extends Component {
 
@@ -26,13 +27,14 @@ export class ManageBookingsForm extends Component {
 
     handleDelete = (e) => {
         e.preventDefault()
-        let temp = this.state.bookings
+        let promises = []
         this.state.bookings.forEach(booking => {
             if (booking.checked) {
-                client.booking.deleteBooking({id: booking.id}).then(res => {
-                    this.getBookings()
-                })
+                promises.push(client.booking.deleteBooking({id: booking.id}))
             }
+        })
+        Promise.allSettled(promises).then(() => {
+            this.getBookings()
         })
 
     }
@@ -92,7 +94,8 @@ export class ManageBookingsForm extends Component {
                     </thead>
                     <tbody>
                     {this.state.bookings.map((booking) => {
-                        if (this.state.date && booking.date.substr(0, 10) !== this.state.date) {
+                        if (this.state.date &&
+                            moment(booking.date.substr(0, 10)).isBefore(moment(this.state.date))) {
                             return ""
                         }
                         return (

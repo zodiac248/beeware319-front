@@ -5,6 +5,8 @@ import client from "../../API/api";
 import {toTitleCase} from "../../helpers";
 import ViewCommentsModal from "./ViewCommentsModal";
 import {Link} from "react-router-dom";
+import EventBus from "../../EventBus";
+import {EVENT_BUS} from "../../constants";
 
 export class Post extends Component {
     constructor(props) {
@@ -26,6 +28,7 @@ export class Post extends Component {
         e.preventDefault()
         client.social.deletePosting({id: this.state.post.id}).then(res => {
             this.setState({post: null})
+            EventBus.dispatch(EVENT_BUS.postUpdate, null);
         })
     }
 
@@ -60,7 +63,7 @@ export class Post extends Component {
                     <ViewCommentsModal post={this.state.post}/>
                     <br/>
                     {
-                        (this.props.isAdmin || this.props.post.email === this.props.email)
+                        (this.props.isAdmin || this.state.post.email === this.props.email)
                         && <Link
                             variant="outline-danger"
                             size="sm"

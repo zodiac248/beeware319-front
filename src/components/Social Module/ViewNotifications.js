@@ -58,7 +58,8 @@ export class ViewNotifications extends Component {
                     return (
                         <Card border="secondary" className="mt-4" style={this.notificationStyles} key={key}>
                             <Card.Body className="card-view-border">
-                                <Card.Title>New Post in "{toTitleCase(notification.posting.topic.name)}"</Card.Title>
+                                <Card.Title>New {notification.type.toLowerCase().includes("comment")? "comment ": "post "}
+                                in "{toTitleCase(notification.posting.topic.name)}"</Card.Title>
                                 <Card.Text>
                                     from {notification.posting.email} on {notification.date.substr(0, 10)}
                                 </Card.Text>

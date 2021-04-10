@@ -31,7 +31,7 @@ export class UpdatePostModalForm extends Component {
         } else {
             client.social.updatePosting(payload).then(res => {
                 NotificationManager.success("Post updated!")
-                EventBus.dispatch(EVENT_BUS.updatePost, null)
+                EventBus.dispatch(EVENT_BUS.postUpdate, null)
                 this.handleClose()
             });
         }

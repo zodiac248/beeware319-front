@@ -39,7 +39,7 @@ export const MAIL_STATUS = {
 }
 
 export const EVENT_BUS = {
-    updatePost: "updatePost",
+    postUpdate: "updatePost",
     buildingAddDelete: "buildingAddDelete",
     topicAddDelete: "topicAddDelete"
 }

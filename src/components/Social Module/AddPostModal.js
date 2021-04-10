@@ -47,7 +47,7 @@ export class AddPostModal extends Component {
             payload.title = toTitleCase(payload.title)
             client.social.addPost(payload).then(res => {
                 this.setState({postId: res.data})
-                EventBus.dispatch(EVENT_BUS.updatePost, null);
+                EventBus.dispatch(EVENT_BUS.postUpdate, null);
             });
         }
     };
