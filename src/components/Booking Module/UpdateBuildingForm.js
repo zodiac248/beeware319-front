@@ -131,7 +131,7 @@ export class UpdateBuildingForm extends Component {
                                                 }}
                                                 defaultValue={building.name}
                                                 value={this.state.updatedBuildings[building.id]
-                                                && this.state.updatedBuildings[building.id].name
+                                                && this.state.updatedBuildings[building.id].hasOwnProperty("name")
                                                     ? this.state.updatedBuildings[building.id].name : building.name}
                                             />
                                         </Col>
@@ -146,7 +146,7 @@ export class UpdateBuildingForm extends Component {
                                                 }}
                                                 defaultValue={building.address}
                                                 value={this.state.updatedBuildings[building.id]
-                                                && this.state.updatedBuildings[building.id].address
+                                                && this.state.updatedBuildings[building.id].hasOwnProperty("address")
                                                     ? this.state.updatedBuildings[building.id].address : building.address}
                                             />
                                         </Col>

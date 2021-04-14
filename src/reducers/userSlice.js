@@ -26,7 +26,7 @@
 //     extraReducers: {
 //         [getUserInfo.fulfilled]: (state, action) => {
 //             state.isLoggedIn = action.payload.authenticated
-//             state.isAdmin = action.payload.principal.claims.roles.includes(roles.admin)
+//             state.`isAdmin = action.payload.principal.claims.roles.includes(roles.admin)
 //             state.username = action.payload.name
 //             state.fName = action.payload.principal.givenName
 //             state.lName = action.payload.principal.familyName

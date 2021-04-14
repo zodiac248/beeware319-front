@@ -155,6 +155,7 @@ export class UpdateFloorsModal extends Component {
             floor.image = ev.target.result.split(',')[1]
             floors[floorId] = floor
             this.setState({floors: floors})
+            e.target.value=""
         }
         reader.readAsDataURL(file)
     }

@@ -14,30 +14,32 @@ import AdminMail from "./pages/Mail Module/AdminMail";
 import {NotificationContainer} from "react-notifications";
 
 export const Routes = (props) => {
-    return (
-        <div>
-            <NotificationContainer/>
-            <Switch>
-                <Route exact path="/">
-                    < App/>
-                </Route>
-                <Route exact path="/user">
-                    < User/>
-                </Route>
-                <Route exact path="/booking">
-                    < Booking/>
-                </Route>
-                <Route exact path="/mybookings">
-                    < ViewBookings/>
-                </Route>
-                <Route exact path="/social">
-                    < Social/>
-                </Route>
-                <Route exact path="/mail">
-                    < ManageRequests />
-                </Route>
-            </Switch>
-            {props.isAdmin &&
+
+        return (
+            props.accessToken &&
+            <div>
+                <NotificationContainer/>
+                <Switch>
+                    <Route exact path="/">
+                        < App/>
+                    </Route>
+                    <Route exact path="/user">
+                        < User/>
+                    </Route>
+                    <Route exact path="/booking">
+                        < Booking/>
+                    </Route>
+                    <Route exact path="/mybookings">
+                        < ViewBookings/>
+                    </Route>
+                    <Route exact path="/social">
+                        < Social/>
+                    </Route>
+                    <Route exact path="/mail">
+                        < ManageRequests/>
+                    </Route>
+                </Switch>
+                {props.isAdmin &&
                 <Switch>
                     <Route exact path="/admin/booking">
                         < AdminBooking/>
@@ -46,20 +48,21 @@ export const Routes = (props) => {
                         < AdminSocial/>
                     </Route>
                     <Route exact path="/admin/mail">
-                        < AdminMail />
+                        < AdminMail/>
                     </Route>
                 </Switch>
-            }
-        </div>
-    )
-}
+                }
+            </div>
+        )
+    }
 ;
+
 function mapStateToProps(state) {
     const {auth} = state
-    return {isAdmin: auth.isAdmin}
+    return {isAdmin: auth.isAdmin, accessToken: auth.accessToken}
 }
 
 export default connect(
     mapStateToProps,
-null
+    null
 )(Routes);

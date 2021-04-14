@@ -57,7 +57,10 @@ export class AddPostModal extends Component {
     }
 
     handleClose = () => {
-        this.setState({show: false, postId: -1, topicId: -1, postTitle: "", content: ""})
+        this.setState({show: false, postId: -1, postTitle: "", content: ""})
+        if (!this.props.topicId) {
+            this.setState({topicId: -1})
+        }
     }
 
     setTopicsID = (e) => {

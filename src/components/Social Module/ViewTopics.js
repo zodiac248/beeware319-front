@@ -27,8 +27,8 @@ export class ViewTopics extends Component {
             client.social.getSubscriptionsByEmail({email: this.props.email}).then(res => {
                 let temp2 = this.state.topics
                 res.data.forEach(sub => {
-                    temp2[sub.topic.id].subscribed = true
-                    temp2[sub.topic.id].subscriptionId = sub.id
+                    temp2[sub.topic.id]["subscribed"] = true
+                    temp2[sub.topic.id]["subscriptionId"] = sub.id
                 })
                 this.setState({topics: temp2})
             })
