@@ -2,9 +2,9 @@ import React, {Component} from "react";
 import {Button, Form, ModalBody, Modal, Col, Row, Container} from "react-bootstrap";
 import {connect} from "react-redux";
 import client from "../../API/api";
-import * as HiIcons from "react-icons/hi";
-import {toTitleCase} from "../../helpers";
+import {arrayHasDuplicates, removeDuplicateWhiteSpace, toTitleCase} from "../../helpers";
 import EventBus from "../../EventBus";
+import {NotificationManager} from "react-notifications";
 
 export class UpdateTopicsModal extends Component {
     initialState = {show: false, newTopicNames: {}, originalTopics: []}
@@ -42,7 +42,7 @@ export class UpdateTopicsModal extends Component {
 
     updateTopic = (e, id) => {
         let temp = this.state.newTopicNames
-        temp[id] = e.target.value
+        temp[id] = removeDuplicateWhiteSpace(e.target.value)
         this.setState({newTopicNames: temp});
     }
 
@@ -61,21 +61,37 @@ export class UpdateTopicsModal extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault()
+        let filteredValues = []
+        Object.values(this.state.newTopicNames).forEach((name) => {
+            filteredValues.push(name.trim().toLowerCase())
+        })
+        if (arrayHasDuplicates(filteredValues)) {
+            NotificationManager.error("Please remove duplicate items", "", 2000)
+            return
+        }
+        let promises = []
         if (Object.keys(this.state.newTopicNames).length >= 0) {
             Object.keys(this.state.newTopicNames).forEach(id => {
-                let name = this.state.newTopicNames[id];
-                client.social.updateTopic({id, name}).then(() => {
-                    this.getTopics()
-                    this.setState({newTopicNames: {}})
-                })
+                let name = this.state.newTopicNames[id].trim().toLowerCase();
+                if (name.length === 0) {
+                    return;
+                }
+                promises.push(client.social.updateTopic({id, name}))
             })
         }
+        Promise.all(promises).then(() => {
+            this.getTopics()
+            this.setState({newTopicNames: {}})
+        }).catch(err => {
+            this.getTopics()
+            NotificationManager.warning("One more more input is too long or duplicated", "", 2000)
+        })
     }
 
 
     render() {
         return (
-            <div>
+            <div className={"admin-modal"}>
                 <Button variant="info" onClick={this.handleShow}>
                     Update Topics
                 </Button>

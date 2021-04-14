@@ -13,7 +13,8 @@ export class ViewCommentsModal extends Component {
     }
 
     viewCommentsStyles = {
-        textAlign: 'left'
+        textAlign: 'left',
+        wordWrap: 'break-word'
     }
 
     componentDidMount() {
@@ -83,7 +84,7 @@ export class ViewCommentsModal extends Component {
                                                 <br/>
                                                 <span style={{color: "grey"}}>
                                                    Posted on {comment.date.substr(0, 10)} by {comment.email} </span>
-                                                {comment.email === this.props.email &&
+                                                {(this.props.isAdmin || comment.email === this.props.email) &&
                                                 <Link
                                                     onClick={(e) => {
                                                         this.deleteComment(e, comment)
@@ -112,6 +113,7 @@ export class ViewCommentsModal extends Component {
                                                       value={this.state.content}
                                                       as="textarea" rows={2}/>
                                     </Form.Group>
+                                    <Form.Text className="text-muted"> Max 250 characters </Form.Text>
                                 </Col>
                                 <Col sm={2}>
                                     <Button variant={"outline-primary"} onClick={this.addComment}> Add </Button>
@@ -128,7 +130,7 @@ export class ViewCommentsModal extends Component {
 
 function mapStateToProps(state) {
     const {auth} = state
-    return {email: auth.email}
+    return {email: auth.email, isAdmin: auth.isAdmin}
 }
 
 export default connect(

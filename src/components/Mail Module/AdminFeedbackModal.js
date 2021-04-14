@@ -19,18 +19,26 @@ export class AdminFeedbackModal extends React.Component {
 
     componentDidMount() {
         if (this.props.request && this.props.mail) {
+            if (this.props.request.feedback) {
+                this.setState({
+                    feedback: this.props.request.feedback
+                })
+            }
             this.setState({
                 status: this.props.mail.status,
-                feedback: this.props.request.feedback,
             })
         }
     }
 
     componentDidUpdate(prevProps) {
         if (equal(this.props !== prevProps)) {
+            if (this.props.request.feedback) {
+                this.setState({
+                    feedback: this.props.request.feedback
+                })
+            }
             this.setState({
                 status: this.props.mail.status,
-                feedback: this.props.request.feedback,
             })
         }
     }
@@ -60,7 +68,12 @@ export class AdminFeedbackModal extends React.Component {
     }
 
     handleClose = () => {
-        this.setState({show: false, status: this.props.mail.status, feedback: this.props.request.feedback})
+        this.setState({show: false, feedback: ""})
+        if (this.props.mail) {
+            this.setState({status: this.props.mail.status})
+        } if (this.props.request && this.props.request.feedback) {
+            this.setState({feedback: this.props.request.feedback})
+        }
     }
 
     setStatus = (e) => {
@@ -121,6 +134,7 @@ export class AdminFeedbackModal extends React.Component {
                                                       placeholder="Provide feedback here"/>
                                     </span>
                                 </Form.Group>
+                                <Form.Text className="text-muted"> Max 512 characters </Form.Text>
                             </Container>
                         </Form>
                     </ModalBody>

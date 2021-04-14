@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import client from "../../API/api";
 import {NotificationManager} from "react-notifications";
 import EventBus from "../../EventBus";
+import {removeDuplicateWhiteSpace} from "../../helpers";
 
 
 export class AddBuildingForm extends React.Component {
@@ -17,13 +18,15 @@ export class AddBuildingForm extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        if (this.state.buildingAddress === "" || this.state.buildingName === "") {
+        let address = this.state.buildingAddress.trim()
+        let name = this.state.buildingName.trim()
+        if (address === "" || name === "") {
             NotificationManager.error("Please fill in all fields", "", 2000)
             return;
         }
         const payload = {
-            name: this.state.buildingName,
-            address: this.state.buildingAddress
+            name: name,
+            address: address
         }
         client.booking.addBuilding(payload).then(res => {
             NotificationManager.success(this.state.buildingName + " successfully added", "", 2000)
@@ -33,11 +36,11 @@ export class AddBuildingForm extends React.Component {
     };
 
     setBuilding = (e) => {
-        this.setState({buildingName: e.target.value})
+        this.setState({buildingName: removeDuplicateWhiteSpace(e.target.value)})
     }
 
     setBuildingAddress = (e) => {
-        this.setState({buildingAddress: e.target.value})
+        this.setState({buildingAddress: removeDuplicateWhiteSpace(e.target.value)})
     }
 
     render() {

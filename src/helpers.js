@@ -7,6 +7,10 @@ export function toTitleCase(str) {
     });
 }
 
+export function arrayHasDuplicates(array) {
+    return new Set(array).size !== array.length
+}
+
 export function capitalizeFirst(str) {
     if (typeof str !== 'string') return ''
     return str.charAt(0).toUpperCase() + str.slice(1)
@@ -42,4 +46,12 @@ export function isInclusivelyBeforeDay(a, b) {
 export function isAfterDay(a, b) {
     if (!moment.isMoment(a) || !moment.isMoment(b)) return false;
     return !isBeforeDay(a, b)
+}
+
+export function removeDuplicateWhiteSpace(str) {
+    if (!str) {
+        return ""
+    } else {
+        return str.replace(/\s+/g,' ')
+    }
 }

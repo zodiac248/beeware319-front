@@ -38,11 +38,11 @@ export class AddPostModal extends Component {
         const payload = {
             email: this.props.email,
             topicId: this.state.topicId,
-            content: this.state.content,
-            title: this.state.postTitle
+            content: this.state.content.trim(),
+            title: this.state.postTitle.trim()
         }
         if (payload.topicId === -1 || payload.title === "" || payload.content === "" || payload.email === "") {
-            NotificationManager.error("Please fill out all fields!")
+            NotificationManager.error("Please fill out all fields")
         } else {
             payload.title = toTitleCase(payload.title)
             client.social.addPost(payload).then(res => {
@@ -57,7 +57,7 @@ export class AddPostModal extends Component {
     }
 
     handleClose = () => {
-        this.setState({show: false, postId: -1})
+        this.setState({show: false, postId: -1, topicId: -1, postTitle: "", content: ""})
     }
 
     setTopicsID = (e) => {

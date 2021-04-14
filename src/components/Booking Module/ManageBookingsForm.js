@@ -71,6 +71,9 @@ export class ManageBookingsForm extends Component {
                                           type="date"
                                           name="date"
                                           value={this.state.date}/>
+                            <Form.Text className={"text-muted"}>
+                                Shows bookings on/after the selected date
+                            </Form.Text>
                         </Form.Group>
                     </Col>
                     <Col sm={1}>

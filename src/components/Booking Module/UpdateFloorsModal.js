@@ -38,7 +38,10 @@ export class UpdateFloorsModal extends Component {
     }
 
     handleNewFloorNumberChange = (e) => {
-        this.setState({newFloorNum: e.target.value})
+        let num = e.target.value.trim()
+        if (/^\d+$/.test(num) && num < 2147483647 ) {
+            this.setState({newFloorNum: num})
+        }
     }
 
     handleNewFloorImageChange = (e) => {
@@ -63,7 +66,6 @@ export class UpdateFloorsModal extends Component {
             client.booking.addFloor({
                 floorNumber: floorNumber,
                 buildingId: this.state.currentBuildingId,
-                deskNumbers: "",
                 image: floorImage
             }).then(() => {
                 NotificationManager.success("New floor added")
@@ -97,8 +99,16 @@ export class UpdateFloorsModal extends Component {
             this.setState({confirmationShow: false, floors: floors, sanitizedDesks: "", violatedDesks: null,
                 duplicatedDesks: null, currentFloorID: null})
         }).catch(res => {
-            this.setState({confirmationShow: false, sanitizedDesks: "", violatedDesks: null,
-                duplicatedDesks: null, currentFloorID: null})
+            client.booking.getDesks({
+                floorId: floorId
+            }).then(res => {
+                let floors_tmp = this.state.floors
+                let desknumbers = []
+                res.data.forEach(desk => { desknumbers.push(desk.deskNumber) })
+                floors_tmp[floorId].desks = desknumbers.join(',')
+                this.setState({confirmationShow: false, floors: floors_tmp, sanitizedDesks: "", violatedDesks: null,
+                    duplicatedDesks: null, currentFloorID: null})
+            }) 
         })
     }
 
@@ -127,9 +137,12 @@ export class UpdateFloorsModal extends Component {
     updateFloorNum = (e, floorId) => {
         let floors = this.state.floors
         let floor = this.state.floors[floorId]
-        floor.floorNumber = e.target.value
-        floors[floorId] = floor
-        this.setState({floors: floors})
+        let num = e.target.value.trim()
+        if (/^\d+$/.test(num) && num < 2147483647 ) {
+            floor.floorNumber = num
+            floors[floorId] = floor
+            this.setState({floors: floors})
+        }
     }
 
     updateFloorImage = (e, floorId) => {
@@ -170,7 +183,7 @@ export class UpdateFloorsModal extends Component {
                 return;
             }
             floors.forEach(floor => {
-                client.booking.getDesks(floor.id).then(res => {
+                client.booking.getDesks({floorId: floor.id}).then(res => {
                     let temp = []
                     res.data.forEach(desk => {
                         temp.push(desk.deskNumber)
@@ -289,7 +302,7 @@ export class UpdateFloorsModal extends Component {
                                                         <Col sm="7" key={floorId}>
                                                             <Form.Control onChange={(e) => {
                                                                 this.updateFloorNum(e, floorId)
-                                                            }} defaultValue={floor.floorNumber}/>
+                                                            }} value={floor.floorNumber}/>
                                                         </Col>
                                                     </Form.Group>
                                                 </Row>
@@ -358,7 +371,7 @@ export class UpdateFloorsModal extends Component {
 
                 <Modal show={this.state.confirmationShow} onHide={this.handleConfirmationClose} className="confirmation">
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirmation Notice</Modal.Title>
+                        <Modal.Title>Confirm Floor Update</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <div style={{
@@ -380,7 +393,7 @@ export class UpdateFloorsModal extends Component {
                             {(this.state.violatedDesks === null || this.state.violatedDesks.length === 0) &&
                                (this.state.duplicatedDesks === null || this.state.duplicatedDesks.length === 0) &&
                                 <p>
-                                    Would you like to proceed?
+                                    Are you sure you want to update this floor?
                                 </p>
                             }
                         </div>
@@ -390,7 +403,7 @@ export class UpdateFloorsModal extends Component {
                             Cancel
                         </Button>
                         <Button variant="primary" onClick={(e) => {this.updateFloor(e, this.state.currentFloorID)}}>
-                            Proceed	
+                            Confirm
                         </Button>
                     </Modal.Footer>
                 </Modal>

@@ -34,7 +34,7 @@ export class Post extends Component {
 
     render() {
         if (!this.state.post) {
-            return ""
+            return "This post no longer exists"
         }
         return (
             <Card style={this.postStyles} className="mt-4 card-view-border">

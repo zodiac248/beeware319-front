@@ -9,7 +9,7 @@ export default class mailClient {
             return response
         } catch (e) {
             console.log(e)
-            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
                 store.dispatch({type: "error/newError", payload: e.response.data})
             }
             return Promise.reject()
@@ -61,7 +61,7 @@ export default class mailClient {
             return response
         } catch (e) {
             console.log(e)
-            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
                 store.dispatch({type: "error/newError", payload: e.response.data})
             }
             return Promise.reject()
@@ -74,7 +74,7 @@ export default class mailClient {
             return response
         } catch (e) {
             console.log(e)
-            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
                 store.dispatch({type: "error/newError", payload: e.response.data})
             }
             return Promise.reject()
@@ -87,7 +87,7 @@ export default class mailClient {
             return response
         } catch (e) {
             console.log(e)
-            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
                 store.dispatch({type: "error/newError", payload: e.response.data})
             }
             return Promise.reject()
@@ -100,7 +100,20 @@ export default class mailClient {
             return response
         } catch (e) {
             console.log(e)
-            if (e.response && e.response.hasOwnProperty("data") && e.response.data instanceof String) {
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
+            return Promise.reject()
+        }
+    }
+
+    static async deleteMail({id}) {
+        try {
+            const response = await axios.delete(baseUrl + "/mail", {data: {id}});
+            return response
+        } catch (e) {
+            console.log(e)
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
                 store.dispatch({type: "error/newError", payload: e.response.data})
             }
             return Promise.reject()

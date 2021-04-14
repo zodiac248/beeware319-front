@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Button, Col, Form, Modal, Row} from 'react-bootstrap';
+import {Button, Col, Container, Form, Modal, Row} from 'react-bootstrap';
 import 'react-notifications/lib/notifications.css';
 import {NotificationManager} from "react-notifications";
 import client from "../../API/api";
@@ -21,8 +21,8 @@ export class MailRequestModal extends Component {
         textAlign: 'left'
     }
 
-    initialState = {show: false, instructionType: this.INSTRUCTION_TYPES.hold, instructionDescription: null,
-        requestedCompletionDate: null}
+    initialState = {show: false, instructionType: this.INSTRUCTION_TYPES.hold, instructionDescription: "",
+        requestedCompletionDate: ""}
 
     constructor(props) {
         super(props);
@@ -41,11 +41,13 @@ export class MailRequestModal extends Component {
 
     componentDidUpdate(prevProps) {
         if (equal(this.props !== prevProps)) {
-            this.setState({
-                instructionType: this.props.request.instructionType,
-                instructionDescription: this.props.request.instructionDescription,
-                requestedCompletionDate: this.props.request.requestedCompletionDate.substr(0, 10)
-            })
+            if (this.props.request) {
+                this.setState({
+                    instructionType: this.props.request.instructionType,
+                    instructionDescription: this.props.request.instructionDescription,
+                    requestedCompletionDate: this.props.request.requestedCompletionDate.substr(0, 10)
+                })
+            }
         }
     }
 
@@ -54,15 +56,26 @@ export class MailRequestModal extends Component {
     }
 
     handleClose = () => {
-        this.setState({show: false, instructionType: this.props.request.instructionType,
-            instructionDescription:this.props.request.instructionDescription,
-            requestedCompletionDate: this.props.request.requestedCompletionDate.substr(0, 10)})
+        this.setState({show: false, instructionType: this.INSTRUCTION_TYPES.hold, instructionDescription: "",
+            requestedCompletionDate: ""})
+        if (this.props.request) {
+            this.setState({instructionType: this.props.request.instructionType,
+                instructionDescription:this.props.request.instructionDescription,
+                requestedCompletionDate: this.props.request.requestedCompletionDate.substr(0, 10)})
+        }
     }
 
     handleSubmit = () => {
         let instructionType = this.state.instructionType
         let instructionDescription = this.state.instructionDescription.trim()
         let requestedCompletionDate = this.state.requestedCompletionDate
+        if (this.props.request &&
+            requestedCompletionDate !== this.props.request.requestedCompletionDate.substr(0, 10)) {
+            if (moment(requestedCompletionDate).isBefore(moment(new Date()))) {
+                NotificationManager.error("Please select a date later than the current date", "", 2000)
+                return;
+            }
+        }
         if (!this.state.requestedCompletionDate) {
             NotificationManager.error("Please select a date", "", NOTIFICATION_TIMER)
             return
@@ -152,6 +165,7 @@ export class MailRequestModal extends Component {
                                                   placeholder="Additional instructions..."
                                                   value={this.state.instructionDescription}
                                     />
+                                    <Form.Text className="text-muted"> Max 512 characters </Form.Text>
                                 </Col>
                             </Form.Group>
                             <Form.Group as={Row} controlId="formDate">

@@ -71,14 +71,11 @@ export class ViewTopics extends Component {
                             return (
                                 <Col style={this.cardColStyle} sm={"6"}>
                                 <Card key={key}>
-                                    <Card.Img src="https://i.stack.imgur.com/y9DpT.jpg"/>
+                                    {/*<Card.Img src="https://i.stack.imgur.com/y9DpT.jpg"/>*/}
                                     <Card.Body>
                                         <Card.Title >
                                             {toTitleCase(topic.name)}
                                         </Card.Title>
-                                        <Card.Text>
-                                            {/*    TODO: add topic description*/}
-                                        </Card.Text>
                                     </Card.Body>
                                     <Card.Footer>
                                         <Button

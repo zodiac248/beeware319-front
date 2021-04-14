@@ -131,9 +131,9 @@ export default class bookingClient {
         }
     }
 
-    static async getDesks(floorID) {
+    static async getDesks({floorId}) {
         try {
-            const response = await axios.get(baseUrl + "/desk", {params: {floorId: floorID}})
+            const response = await axios.get(baseUrl + "/desk", {params: {floorId}})
             return response
         } catch (e) {
             console.log(e)

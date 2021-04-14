@@ -40,7 +40,7 @@ export class ManageBuildingsModal extends React.Component {
                     Manage Buildings
                 </button>
 
-                <Modal show={this.state.show} onHide={this.handleClose} size={"lg"}>
+                <Modal scrollable={true} show={this.state.show} onHide={this.handleClose} size={"lg"}>
                     <Modal.Header closeButton>
                         <Modal.Title>Manage Buildings</Modal.Title>
                     </Modal.Header>

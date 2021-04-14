@@ -52,7 +52,7 @@ export class ViewNotifications extends Component {
     render() {
         return (
             <Container>
-                {this.state.notifications.length === 0? "You have no new notifications" : ""}
+                {Object.keys(this.state.notifications).length === 0? "You have no new notifications" : ""}
                 {Object.keys(this.state.notifications).map(key => {
                     const notification = this.state.notifications[key]
                     return (

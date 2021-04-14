@@ -4,6 +4,8 @@ import {connect} from "react-redux";
 import client from "../../API/api";
 import EventBus from "../../EventBus";
 import {EVENT_BUS} from "../../constants";
+import {NotificationManager} from "react-notifications";
+import {removeDuplicateWhiteSpace} from "../../helpers";
 
 class AddTopicModal extends Component {
     initialState = {show: false, currTopic: "", topics: []}
@@ -24,7 +26,7 @@ class AddTopicModal extends Component {
     updateTopics = (e, index) => {
         if (index < this.state.topics.length) {
             let temp = this.state.topics
-            temp[index] = e.target.value;
+            temp[index] = removeDuplicateWhiteSpace(e.target.value)
             this.setState({topics: temp})
         }
     }
@@ -37,28 +39,45 @@ class AddTopicModal extends Component {
         }
     }
 
-    addTopic = () => {
-        let temp = this.state.topics;
-        temp.push(this.state.currTopic)
-        this.setState({topics: temp, currTopic: ""});
+    addTopic = (e) => {
+        e.preventDefault()
+        if (this.state.currTopic.trim().length > 0 ) {
+            let temp = this.state.topics;
+            temp.push(this.state.currTopic.trim())
+            this.setState({topics: temp, currTopic: ""});
+        } else {
+            NotificationManager.warning("No topic to add", "", 2000)
+        }
+
+
     }
 
     updateCurrTopic = (e) => {
-        this.setState({currTopic: e.target.value})
+        this.setState({currTopic: removeDuplicateWhiteSpace(e.target.value)})
     }
 
-    handleSubmit = () => {
-        this.state.topics.forEach(topic => {
-            client.social.addTopic({name: topic}).then(() => {
-                EventBus.dispatch(EVENT_BUS.topicAddDelete, null);
+    handleSubmit = (e) => {
+        e.preventDefault()
+        let promises = []
+        if (this.state.topics.length > 0){
+            this.state.topics.forEach(topic => {
+                promises.push(client.social.addTopic({name: topic}))
             })
-        })
-        this.setState(this.initialState)
+            Promise.all(promises).then(() => {
+                EventBus.dispatch(EVENT_BUS.topicAddDelete, null);
+                NotificationManager.success("All topics added successfully", "", 2000)
+                this.setState({currTopic: "", topics: []})
+            }).catch(() => {
+                EventBus.dispatch(EVENT_BUS.topicAddDelete, null);
+                NotificationManager.warning("Some topics could not be added", "", 2000)
+                this.setState({currTopic: "", topics: []})
+            })
+        }
     }
 
     render() {
         return (
-            <>
+            <div className={"admin-modal"}>
                 <Button variant="info" onClick={this.handleShow}>
                     Add Topics
                 </Button>
@@ -73,7 +92,6 @@ class AddTopicModal extends Component {
                         <Modal.Title>Add Topics</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Form>
                             {this.state.topics.map((topic, index) => {
                                 return (
                                     <Form.Group as={Row} controlId="formTopicName" key={index}>
@@ -104,7 +122,6 @@ class AddTopicModal extends Component {
                                     <Button variant={"primary"} onClick={this.addTopic}> Add </Button>
                                 </Col>
                             </Form.Group>
-                        </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleClose}>
@@ -115,7 +132,7 @@ class AddTopicModal extends Component {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </>
+            </div>
         )
     }
 }

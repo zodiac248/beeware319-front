@@ -11,7 +11,7 @@ export class FloorSummaryModal extends Component {
     }
 
     handleClose = () => {
-        this.setState({show: false})
+        this.setState({show: false, date: null, floors: [], currentBuildingId: null})
     }
 
     handleOpen = () => {
@@ -23,11 +23,6 @@ export class FloorSummaryModal extends Component {
     }
 
     handleBuildingChange = (e) => {
-        if (!this.state.date) {
-            NotificationManager.warning("Please select a date first")
-            this.setState({currentBuildingId: null})
-            return;
-        }
         const selectedIndex = e.target.options.selectedIndex;
         let buildingId = e.target.options[selectedIndex].getAttribute('data-key')
         this.setState({currentBuildingId: buildingId}, this.getFloors)

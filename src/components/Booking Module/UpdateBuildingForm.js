@@ -4,6 +4,7 @@ import client from "../../API/api";
 import EventBus from "../../EventBus";
 import {EVENT_BUS, NOTIFICATION_TIMER} from "../../constants";
 import {NotificationManager} from "react-notifications";
+import {arrayHasDuplicates, removeDuplicateWhiteSpace} from "../../helpers";
 
 
 export class UpdateBuildingForm extends Component {
@@ -37,7 +38,7 @@ export class UpdateBuildingForm extends Component {
     setName = (e, buildingId) => {
         let updatedBuildings = this.state.updatedBuildings
         let update = updatedBuildings[buildingId] ? updatedBuildings[buildingId] : {}
-        Object.assign(update, {name: e.target.value})
+        Object.assign(update, {name: removeDuplicateWhiteSpace(e.target.value)})
         updatedBuildings[buildingId] = update
         this.setState({updatedBuildings: updatedBuildings})
     }
@@ -45,7 +46,7 @@ export class UpdateBuildingForm extends Component {
     setAddress = (e, buildingId) => {
         let updatedBuildings = this.state.updatedBuildings
         let update = updatedBuildings[buildingId] ? updatedBuildings[buildingId] : {}
-        Object.assign(update, {address: e.target.value})
+        Object.assign(update, {address: removeDuplicateWhiteSpace(e.target.value)})
         updatedBuildings[buildingId] = update
         this.setState({updatedBuildings: updatedBuildings})
     }
@@ -53,8 +54,17 @@ export class UpdateBuildingForm extends Component {
     handleSubmit = (event) => {
         event.preventDefault();
         let updatedBuildings = this.state.updatedBuildings
+        let filteredNames = []
+        let filteredAddresses = []
+        Object.values(updatedBuildings).forEach(building => {
+            if (building.name) filteredNames.push(building.name.toLowerCase().trim())
+            if (building.address) filteredAddresses.push(building.address.toLowerCase().trim())
+        })
+        if (arrayHasDuplicates(filteredAddresses) || arrayHasDuplicates(filteredNames)) {
+            NotificationManager.error("Please remove duplicate values")
+            return;
+        }
         let promises = []
-        console.log(this.state.updatedBuildings)
         Object.keys(this.state.updatedBuildings).forEach(buildingId => {
             let building = updatedBuildings[buildingId]
             let payload = {id: buildingId}
@@ -80,7 +90,7 @@ export class UpdateBuildingForm extends Component {
             this.setState({updatedBuildings: {}})
             EventBus.dispatch(EVENT_BUS.buildingAddDelete, null)
         }).catch(res => {
-            NotificationManager.success("Some buildings could not be updated", "", NOTIFICATION_TIMER)
+            NotificationManager.warning("Some buildings could not be updated", "", NOTIFICATION_TIMER)
             this.setState({updatedBuildings: {}})
             EventBus.dispatch(EVENT_BUS.buildingAddDelete, null)
         })
@@ -105,7 +115,7 @@ export class UpdateBuildingForm extends Component {
     render() {
         return (
             <Form>
-                <div style={{maxHeight: "600px", overflowY : "scroll", overflowX: "hidden"}}>
+                <div style={{maxHeight: "70vh", overflowY : "scroll", overflowX: "hidden"}}>
                 {this.state.buildings.map((building, index) => {
                     return (
                         <div>

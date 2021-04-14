@@ -2,11 +2,13 @@ import React, {Component} from "react";
 import {Button, Card, Col, Container, Form, Nav, Row} from "react-bootstrap"
 import {connect} from "react-redux";
 import client from "../../API/api";
-import {MAIL_STATUS, requestStyles, highlightedInfo} from "../../constants";
+import {MAIL_STATUS, requestStyles, highlightedInfo, EVENT_BUS} from "../../constants";
 import {toTitleCase} from "../../helpers";
 import {MailRequestModal} from "./MailRequestModal";
 import EventBus from "../../EventBus";
 import AdminFeedbackModal from "./AdminFeedbackModal";
+import {Link} from "react-router-dom";
+import moment from "moment";
 
 export class ViewRequests extends Component {
     REQUEST_TABS = {
@@ -38,7 +40,7 @@ export class ViewRequests extends Component {
         EventBus.on("mailUpdate", (data) => {
             this.getAllRequests(this.state.currTab)
         })
-        EventBus.on("buildingAddDelete", (data) => {
+        EventBus.on(EVENT_BUS.buildingAddDelete, (data) => {
             this.getBuildings()
         })
     }
@@ -51,6 +53,7 @@ export class ViewRequests extends Component {
 
     componentWillUnmount() {
         EventBus.remove("mailUpdate");
+        EventBus.remove(EVENT_BUS.buildingAddDelete);
     }
 
     getAllRequests(currTab) {
@@ -62,18 +65,18 @@ export class ViewRequests extends Component {
     }
 
     renderAdminRequests(currTab) {
-        let temp = {}
+        let temp = []
         if (currTab === this.REQUEST_TABS.all.title) {
             client.mail.getAllMail().then(res => {
                 res.data.forEach(mail => {
-                    temp[mail.id] = mail
+                    temp.push(mail)
                 })
                 this.setState({mails: temp})
             })
         } else {
             client.mail.getMailByStatus({status: currTab}).then(res => {
                 res.data.forEach(mail => {
-                    temp[mail.id] = mail
+                    temp.push(mail)
                 })
                 this.setState({mails: temp})
             })
@@ -81,12 +84,12 @@ export class ViewRequests extends Component {
     }
 
     renderMyRequests(currTab) {
-        let temp = {}
+        let temp = []
         let email = this.props.email
         if (currTab === this.REQUEST_TABS.all.title) {
             client.mail.getMailByEmail({email: email}).then(res => {
                 res.data.forEach(mail => {
-                    temp[mail.id] = mail
+                    temp.push(mail)
                 })
                 this.setState({mails: temp})
             })
@@ -94,7 +97,7 @@ export class ViewRequests extends Component {
             client.mail.getMailByStatus({status: currTab}).then(res => {
                 res.data.forEach(mail => {
                     if (mail.email === email) {
-                        temp[mail.id] = mail
+                        temp.push(mail)
                     }
                 })
                 this.setState({mails: temp})
@@ -119,13 +122,36 @@ export class ViewRequests extends Component {
         this.getAllRequests(title)
     }
 
+    handleDelete = (e, mail) => {
+        e.preventDefault()
+        client.mail.deleteMail({id: mail.id}).then(res => {
+            EventBus.dispatch("mailUpdate", null)
+        })
+    }
+
     handleGoTop() {
         window.scrollTo(0,0)
     }
 
+    variant = (mail) => {
+        let status = mail.status
+        if (status === MAIL_STATUS.closed || status === MAIL_STATUS.awaitingRequest ||
+            !mail.request || !mail.request.requestedCompletionDate) {
+            return ""
+        }
+        let completionDate = mail.request.requestedCompletionDate
+        if (moment(completionDate).isSameOrBefore(moment(new Date()))) {
+            return "danger"
+        }
+        if (moment(completionDate).isBetween(moment(new Date()),
+            moment(new Date()).add(7, 'day'))) {
+            return "warning"
+        }
+    }
+
     renderRequest = (mail) => {
         return (
-            <Card style={requestStyles} className="mt-4">
+            <Card key={mail.id} style={requestStyles} border={this.variant(mail)} className="mt-4">
                 <Card.Header>Sent from {toTitleCase(mail.sender)}
                     <span className={"float-right"}>{mail.building.name}</span>
                 </Card.Header>
@@ -176,7 +202,20 @@ export class ViewRequests extends Component {
                     </Card.Text>
                 </Card.Body>
                 <Card.Footer>
-                    {mail.date.substr(0, 10)}
+                    <span className={"float-left"}>{mail.date.substr(0, 10)}</span>
+                    {((this.props.isAdmin && this.props.adminView) || mail.status === MAIL_STATUS.closed)
+                     &&
+                    <Link
+                        className={"float-right"}
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={(e) => {
+                            this.handleDelete(e, mail)
+                        }}
+                        style={{color: "crimson"}}
+                    >
+                        Delete
+                    </Link>}
                 </Card.Footer>
             </Card>
         )
@@ -184,7 +223,7 @@ export class ViewRequests extends Component {
 
     renderMail(mail) {
         return (
-            <Card style={requestStyles} className="mt-4">
+            <Card key={mail.id} style={requestStyles} border={this.variant(mail)} className="mt-4">
                 <Card.Header>Sent from {toTitleCase(mail.sender)}
                     <span className={"float-right"}>{mail.building.name}</span>
                 </Card.Header>
@@ -203,7 +242,20 @@ export class ViewRequests extends Component {
                     </Card.Text>
                 </Card.Body>
                 <Card.Footer>
-                    {mail.date.substr(0, 10)}
+                    <span className={"float-left"}>{mail.date.substr(0, 10)}</span>
+                    {((this.props.isAdmin && this.props.adminView) || mail.status === MAIL_STATUS.awaitingRequest)
+                    &&
+                    <Link
+                        className={"float-right"}
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={(e) => {
+                            this.handleDelete(e, mail)
+                        }}
+                        style={{color: "crimson"}}
+                    >
+                        Delete
+                    </Link>}
                 </Card.Footer>
             </Card>
         )
@@ -245,9 +297,8 @@ export class ViewRequests extends Component {
 
                     <div>
                         <br/>
-                        {Object.keys(this.state.mails).length === 0 ? "No mail to display" : ""}
-                        {Object.keys(this.state.mails).map(key => {
-                            const mail = this.state.mails[key]
+                        {this.state.mails.length === 0 ? "No mail to display" : ""}
+                        {this.state.mails.map(mail => {
                             if (!this.state.buildingId || mail.building.id == this.state.buildingId) {
                                 if (mail.status !== MAIL_STATUS.awaitingRequest) {
                                     return this.renderRequest(mail)

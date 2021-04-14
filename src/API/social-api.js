@@ -179,7 +179,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: "Unexpected error, please try again later"})
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }
@@ -190,7 +192,9 @@ export default class socialClient {
             return response
         } catch (e) {
             console.log(e)
-            store.dispatch({type: "error/newError", payload: "Unexpected error, please try again later"})
+            if (e.response && e.response.hasOwnProperty("data") && typeof e.response.data === 'string') {
+                store.dispatch({type: "error/newError", payload: e.response.data})
+            }
             return Promise.reject()
         }
     }
