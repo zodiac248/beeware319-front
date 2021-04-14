@@ -67,7 +67,7 @@ export class FloorSummaryModal extends Component {
         return (
             <div className="admin-modal">
                 <button className="btn btn-info" onClick={this.handleOpen}> View Bookings Summary</button>
-                <Modal show={this.state.show} onHide={this.handleClose} size="lg">
+                <Modal scrollable={true} show={this.state.show} onHide={this.handleClose} size="lg">
                     <Modal.Header closeButton>
                         <Modal.Title>Booking Summary</Modal.Title>
                     </Modal.Header>
